@@ -12,4 +12,6 @@
 .env.production.local
 npm-debug.log*
 yarn-debug.log*
+__pycache__/
+*.pyc
 yarn-error.log*
