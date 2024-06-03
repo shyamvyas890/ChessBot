@@ -4,6 +4,7 @@ from BoardState import BoardState
 from DebuggingTools import pretty_print_board
 from ArrayToBitboard import convert2DArrayToBitboards
 from KnightMovesGenerator import generateKnightMoves
+from RookMovesGenerator import generateRookMoves
 app = Flask(__name__)
 
 @app.route('/')
@@ -20,20 +21,9 @@ def hello():
     ]
 
     bitboardsObject = convert2DArrayToBitboards(initial_chess_board)
-    generateKnightMoves(Player.HUMAN, bitboardsObject)
+    generateKnightMoves(Player.COMPUTER, bitboardsObject)
 
     return "Test"
-
-
-        
-
-
-
-
-
-
-
-
 
 
 
