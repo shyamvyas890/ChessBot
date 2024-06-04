@@ -1,6 +1,7 @@
-from Player import Player
+from ChessEnums import Player, Piece
 from DebuggingTools import pretty_print_board
 from BoardState import BoardState
+from UtilityFunctions import splitPieceIntoIndividualBitboards, generateOpponentMask, generateFriendlyMasks, modifyBitboardToTakePiece
 
 
 
@@ -26,24 +27,12 @@ def isLeftRightRookMoveValid(newIndividualRookBitboard, friendlyMask, opponentMa
     return 4 #valid move, and it doesn't take an opponent piece or hit a boundary
 
         
-    
-    
-
+rookInstanceVariableDictionary = {
+    Player.COMPUTER: "_computerRooks",
+    Player.HUMAN: "_humanRooks"
+}
 def generateRookMoves(thePlayer: Player, theBitBoardsObject: BoardState):
-    originalRookBitboard = None
-    if(thePlayer == Player.COMPUTER):
-        originalRookBitboard = theBitBoardsObject.computerRooks
-    elif (thePlayer == Player.HUMAN):
-        originalRookBitboard = theBitBoardsObject.humanRooks
-    individualRookBitboards = []
-    individualBoard = originalRookBitboard & (~originalRookBitboard + 1)
-    individualRookBitboards.append(individualBoard)
-    originalRookBitboard ^= individualBoard
-    while(originalRookBitboard != 0):
-        individualBoard = originalRookBitboard & (~originalRookBitboard + 1)
-        individualRookBitboards.append(individualBoard)
-        originalRookBitboard ^= individualBoard
-
+    individualRookBitboards = splitPieceIntoIndividualBitboards(rookInstanceVariableDictionary[thePlayer], theBitBoardsObject)
     isTheRookOffLeftScreen = 0x80_00_00_00_00_00_00_00
     isTheRookOffRightScreen = 0
 
@@ -51,28 +40,10 @@ def generateRookMoves(thePlayer: Player, theBitBoardsObject: BoardState):
     leftBound = 0x80_80_80_80_80_80_80_80
 
     finalLegalRookMoves = []
-
-    allOpponentPlayerPieces = None
-    if(thePlayer == Player.COMPUTER):
-        allOpponentPlayerPieces = theBitBoardsObject.humanKings | theBitBoardsObject.humanRooks | theBitBoardsObject.humanBishops | theBitBoardsObject.humanQueens | theBitBoardsObject.humanKnights | theBitBoardsObject.humanPawns
-    elif(thePlayer == Player.HUMAN):
-        allOpponentPlayerPieces = theBitBoardsObject.computerKings | theBitBoardsObject.computerRooks | theBitBoardsObject.computerBishops | theBitBoardsObject.computerQueens | theBitBoardsObject.computerKnights | theBitBoardsObject.computerPawns
-
+    allOpponentPlayerPieces = generateOpponentMask(thePlayer,theBitBoardsObject)
     for individualRook in individualRookBitboards:
         #other friendly pieces mask
-        allOtherCurrentPlayerPieces = None
-        if(thePlayer == Player.COMPUTER):
-            allOtherCurrentPlayerPieces = theBitBoardsObject.computerKings | theBitBoardsObject.computerBishops | theBitBoardsObject.computerQueens | theBitBoardsObject.computerKnights | theBitBoardsObject.computerPawns
-        elif (thePlayer == Player.HUMAN):
-            allOtherCurrentPlayerPieces = theBitBoardsObject.humanKings | theBitBoardsObject.humanBishops | theBitBoardsObject.humanQueens | theBitBoardsObject.humanKnights | theBitBoardsObject.humanPawns
-        
-        allOtherCurrentPlayerRooks = 0
-        for potentialOtherRook in individualRookBitboards:
-            if potentialOtherRook != individualRook:
-                allOtherCurrentPlayerPieces |= potentialOtherRook
-                allOtherCurrentPlayerRooks |= potentialOtherRook
-        
-
+        allOtherCurrentPlayerPieces, allOtherCurrentPlayerRooks = generateFriendlyMasks(thePlayer, rookInstanceVariableDictionary[thePlayer], theBitBoardsObject, individualRook)
         #up and down
         for index in range(2):
             potentialUpDownRookMove = None
@@ -90,37 +61,8 @@ def generateRookMoves(thePlayer: Player, theBitBoardsObject: BoardState):
                 
                 theBitBoardsObjectCopy = theBitBoardsObject.boardClone()
                 if(score == 3):
-                    if(thePlayer == Player.COMPUTER):
-                        theBitBoardsObjectCopy.computerRooks = newRookBitboard
-                        if((theBitBoardsObjectCopy.humanKings & potentialUpDownRookMove) != 0):
-                            theBitBoardsObjectCopy.humanKings ^= potentialUpDownRookMove
-                        elif((theBitBoardsObjectCopy.humanRooks & potentialUpDownRookMove) != 0):
-                            theBitBoardsObjectCopy.humanRooks ^= potentialUpDownRookMove
-                        elif((theBitBoardsObjectCopy.humanBishops & potentialUpDownRookMove) != 0):
-                            theBitBoardsObjectCopy.humanBishops ^= potentialUpDownRookMove
-                        elif((theBitBoardsObjectCopy.humanQueens & potentialUpDownRookMove) != 0):
-                            theBitBoardsObjectCopy.humanQueens ^= potentialUpDownRookMove
-                        elif((theBitBoardsObjectCopy.humanKnights & potentialUpDownRookMove) != 0):
-                            theBitBoardsObjectCopy.humanKnights ^= potentialUpDownRookMove
-                        elif((theBitBoardsObjectCopy.humanPawns & potentialUpDownRookMove) != 0):
-                            theBitBoardsObjectCopy.humanPawns ^= potentialUpDownRookMove
-                        
-                    elif(thePlayer == Player.HUMAN):
-                        theBitBoardsObjectCopy.humanRooks = newRookBitboard
-                        if((theBitBoardsObjectCopy.computerKings & potentialUpDownRookMove) != 0):
-                            theBitBoardsObjectCopy.computerKings ^= potentialUpDownRookMove
-                        elif((theBitBoardsObjectCopy.computerRooks & potentialUpDownRookMove) != 0):
-                            theBitBoardsObjectCopy.computerRooks ^= potentialUpDownRookMove
-                        elif((theBitBoardsObjectCopy.computerBishops & potentialUpDownRookMove) != 0):
-                            theBitBoardsObjectCopy.computerBishops ^= potentialUpDownRookMove
-                        elif((theBitBoardsObjectCopy.computerQueens & potentialUpDownRookMove) != 0):
-                            theBitBoardsObjectCopy.computerQueens ^= potentialUpDownRookMove
-                        elif((theBitBoardsObjectCopy.computerKnights & potentialUpDownRookMove) != 0):
-                            theBitBoardsObjectCopy.computerKnights ^= potentialUpDownRookMove
-                        elif((theBitBoardsObjectCopy.computerPawns & potentialUpDownRookMove) != 0):
-                            theBitBoardsObjectCopy.computerPawns ^= potentialUpDownRookMove
+                    modifyBitboardToTakePiece(theBitBoardsObjectCopy,thePlayer, rookInstanceVariableDictionary[thePlayer], newRookBitboard, potentialUpDownRookMove)
                     finalLegalRookMoves.append(theBitBoardsObjectCopy)
-
                     break
                 if(score == 4):
                     if(thePlayer == Player.COMPUTER):
@@ -155,36 +97,7 @@ def generateRookMoves(thePlayer: Player, theBitBoardsObject: BoardState):
                 newRookBitboard = allOtherCurrentPlayerRooks | potentialLeftRightRookMove
                 theBitBoardsObjectCopy = theBitBoardsObject.boardClone()
                 if(score == 2):
-                    if(thePlayer == Player.COMPUTER):
-                        theBitBoardsObjectCopy.computerRooks = newRookBitboard
-                        if((theBitBoardsObjectCopy.humanKings & potentialLeftRightRookMove) != 0):
-                            theBitBoardsObjectCopy.humanKings ^= potentialLeftRightRookMove
-                        elif((theBitBoardsObjectCopy.humanRooks & potentialLeftRightRookMove) != 0):
-                            theBitBoardsObjectCopy.humanRooks ^= potentialLeftRightRookMove
-                        elif((theBitBoardsObjectCopy.humanBishops & potentialLeftRightRookMove) != 0):
-                            theBitBoardsObjectCopy.humanBishops ^= potentialLeftRightRookMove
-                        elif((theBitBoardsObjectCopy.humanQueens & potentialLeftRightRookMove) != 0):
-                            theBitBoardsObjectCopy.humanQueens ^= potentialLeftRightRookMove
-                        elif((theBitBoardsObjectCopy.humanKnights & potentialLeftRightRookMove) != 0):
-                            theBitBoardsObjectCopy.humanKnights ^= potentialLeftRightRookMove
-                        elif((theBitBoardsObjectCopy.humanPawns & potentialLeftRightRookMove) != 0):
-                            theBitBoardsObjectCopy.humanPawns ^= potentialLeftRightRookMove
-                        
-                        
-                    elif(thePlayer == Player.HUMAN):
-                        theBitBoardsObjectCopy.humanRooks = newRookBitboard
-                        if((theBitBoardsObjectCopy.computerKings & potentialLeftRightRookMove) != 0):
-                            theBitBoardsObjectCopy.computerKings ^= potentialLeftRightRookMove
-                        elif((theBitBoardsObjectCopy.computerRooks & potentialLeftRightRookMove) != 0):
-                            theBitBoardsObjectCopy.computerRooks ^= potentialLeftRightRookMove
-                        elif((theBitBoardsObjectCopy.computerBishops & potentialLeftRightRookMove) != 0):
-                            theBitBoardsObjectCopy.computerBishops ^= potentialLeftRightRookMove
-                        elif((theBitBoardsObjectCopy.computerQueens & potentialLeftRightRookMove) != 0):
-                            theBitBoardsObjectCopy.computerQueens ^= potentialLeftRightRookMove
-                        elif((theBitBoardsObjectCopy.computerKnights & potentialLeftRightRookMove) != 0):
-                            theBitBoardsObjectCopy.computerKnights ^= potentialLeftRightRookMove
-                        elif((theBitBoardsObjectCopy.computerPawns & potentialLeftRightRookMove) != 0):
-                            theBitBoardsObjectCopy.computerPawns ^= potentialLeftRightRookMove
+                    modifyBitboardToTakePiece(theBitBoardsObjectCopy, thePlayer, rookInstanceVariableDictionary[thePlayer], newRookBitboard, potentialLeftRightRookMove)
                     finalLegalRookMoves.append(theBitBoardsObjectCopy)
                     break
                 if(score == 3):

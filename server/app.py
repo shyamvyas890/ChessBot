@@ -1,5 +1,5 @@
 from flask import Flask
-from Player import Player
+from ChessEnums import Player
 from BoardState import BoardState
 from DebuggingTools import pretty_print_board
 from ArrayToBitboard import convert2DArrayToBitboards
@@ -11,18 +11,18 @@ app = Flask(__name__)
 @app.route('/')
 def hello():
     initial_chess_board = [
-        ['R', 'N', 'B', 'Q', 'K', ' ', 'N', 'R'],  
+        ['R', 'N', 'B', 'Q', 'K', 'B', 'N', ' '],  
         ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],  
         [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  
         [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  
-        [' ', ' ', ' ', 'B', ' ', ' ', ' ', ' '], 
+        [' ', ' ', ' ', 'R', ' ', ' ', ' ', ' '], 
         [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
         ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],  
         ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r']   
     ]
 
     bitboardsObject = convert2DArrayToBitboards(initial_chess_board)
-    generateBishopMoves(Player.COMPUTER, bitboardsObject)
+    generateRookMoves(Player.COMPUTER, bitboardsObject)
 
     return "Test"
 
