@@ -7,25 +7,27 @@ from KnightMovesGenerator import generateKnightMoves
 from RookMovesGenerator import generateRookMoves
 from BishopMovesGenerator import generateBishopMoves
 from KingMoveGenerator import generateKingMoves
+from QueenMoveGenerator import generateQueenMoves
 app = Flask(__name__)
 
 @app.route('/')
 def hello():
     initial_chess_board = [
-        ['R', 'N', 'B', 'Q', ' ', 'B', 'N', 'R'],  
+        ['R', 'N', 'B', ' ', 'K', 'B', 'N', 'R'],  
         ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],  
         [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  
         [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  
+        [' ', ' ', ' ', 'Q', ' ', ' ', ' ', ' '], 
         [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-        [' ', ' ', ' ', ' ', 'K', ' ', ' ', ' '], 
         ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],  
         ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r']   
     ]
 
     bitboardsObject = convert2DArrayToBitboards(initial_chess_board)
-    generateKingMoves(Player.COMPUTER, bitboardsObject)
-
+    queenMoves = generateQueenMoves(Player.COMPUTER, bitboardsObject)
+    print(len(queenMoves))
     return "Test"
+    
 
 
 
