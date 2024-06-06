@@ -16,16 +16,6 @@ PAWN_DEFAULT_DICTIONARY = {
 }
 RIGHT_BOUND = 0x01_01_01_01_01_01_01_01
 LEFT_BOUND = 0x80_80_80_80_80_80_80_80
-'''
-pawn rules:
-
-If pawn is on default line, it can move up two or one
-If the Pawn has an opponent piece diagonally from it, it can capture and if not it cant
-
-
-If on any of the above pawn moves, it lands on opposite end of the board, you can replace with either a queen or knight
-
-'''
 
 def generatePawnMoves(thePlayer: Player, theBitboardsObject: BoardState):
     individualPawnBitboards = splitPieceIntoIndividualBitboards(PAWN_INSTANCE_VARIABLE_DICTIONARY[thePlayer], theBitboardsObject)
