@@ -39,4 +39,7 @@ def convert2DArrayToBitboards(the2dArray):
                 humanKnights |= (1 << indexForBitwiseOperations)
             elif(the2dArray[i][j]== "p"):
                 humanPawns |= (1 << indexForBitwiseOperations)
-    return BoardState(computerKings, computerRooks, computerBishops, computerQueens, computerKnights, computerPawns, humanKings, humanRooks, humanBishops, humanQueens, humanKnights, humanPawns)
+    return BoardState(computerKings, computerRooks, computerBishops, computerQueens, 
+                      computerKnights, computerPawns, humanKings, humanRooks, 
+                      humanBishops, humanQueens, humanKnights, humanPawns,
+                      1,2,2,1,2,8,1,2,2,1,2,8)

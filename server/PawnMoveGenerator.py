@@ -44,9 +44,12 @@ def generatePawnMoves(thePlayer: Player, theBitboardsObject: BoardState):
                     theBitboardsObjectCopy.computerPawns = newPawnBitboard
                 if((potentialMove & PAWN_FINAL_ROW_DICTIONARY[thePlayer]) != 0):
                     theBitboardsObjectCopy.computerPawns ^= potentialMove
+                    theBitboardsObjectCopy.numComputerPawns -= 1
                     theBitboardsObjectCopy2 = theBitboardsObjectCopy.boardClone()
                     theBitboardsObjectCopy.computerQueens |= potentialMove
+                    theBitboardsObjectCopy.numComputerQueens += 1
                     theBitboardsObjectCopy2.computerKnights |= potentialMove
+                    theBitboardsObjectCopy2.numComputerKnights += 1
                     finalLegalPawnMoves.append(theBitboardsObjectCopy2)
                 finalLegalPawnMoves.append(theBitboardsObjectCopy)     
         else:    
@@ -69,9 +72,12 @@ def generatePawnMoves(thePlayer: Player, theBitboardsObject: BoardState):
                     theBitboardsObjectCopy.humanPawns = newPawnBitboard
                 if((potentialMove & PAWN_FINAL_ROW_DICTIONARY[thePlayer]) != 0):
                     theBitboardsObjectCopy.humanPawns ^= potentialMove
+                    theBitboardsObjectCopy.numHumanPawns -= 1
                     theBitboardsObjectCopy2 = theBitboardsObjectCopy.boardClone()
                     theBitboardsObjectCopy.humanQueens |= potentialMove
+                    theBitboardsObjectCopy.numHumanQueens += 1
                     theBitboardsObjectCopy2.humanKnights |= potentialMove
+                    theBitboardsObjectCopy2.numHumanKnights += 1
                     finalLegalPawnMoves.append(theBitboardsObjectCopy2)
                 finalLegalPawnMoves.append(theBitboardsObjectCopy)
     return finalLegalPawnMoves

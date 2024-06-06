@@ -64,16 +64,22 @@ def generateKnightMoves(thePlayer: Player, theBitboardsObject: BoardState):
                 if (translatedBitboard & opponentMask) != 0:
                     if((theBitboardsObjectCopy.humanKings & translatedBitboard) != 0):
                         theBitboardsObjectCopy.humanKings ^= translatedBitboard
+                        theBitboardsObjectCopy.numHumanKings -= 1
                     elif((theBitboardsObjectCopy.humanRooks & translatedBitboard) != 0):
                         theBitboardsObjectCopy.humanRooks ^= translatedBitboard
+                        theBitboardsObjectCopy.numHumanRooks -= 1
                     elif((theBitboardsObjectCopy.humanBishops & translatedBitboard) != 0):
                         theBitboardsObjectCopy.humanBishops ^= translatedBitboard
+                        theBitboardsObjectCopy.numHumanBishops -= 1
                     elif((theBitboardsObjectCopy.humanQueens & translatedBitboard) != 0):
                         theBitboardsObjectCopy.humanQueens ^= translatedBitboard
+                        theBitboardsObjectCopy.numHumanQueens -= 1
                     elif((theBitboardsObjectCopy.humanKnights & translatedBitboard) != 0):
                         theBitboardsObjectCopy.humanKnights ^= translatedBitboard
+                        theBitboardsObjectCopy.numHumanKnights -= 1
                     elif((theBitboardsObjectCopy.humanPawns & translatedBitboard) != 0):
                         theBitboardsObjectCopy.humanPawns ^= translatedBitboard
+                        theBitboardsObjectCopy.numHumanPawns -= 1
                 finalLegalKnightMoves.append(theBitboardsObjectCopy)
         elif (thePlayer == Player.HUMAN):
             for translatedBitboard in translatedBitboardsP2:
@@ -83,16 +89,22 @@ def generateKnightMoves(thePlayer: Player, theBitboardsObject: BoardState):
                 if (translatedBitboard & opponentMask) != 0:
                     if((theBitboardsObjectCopy.computerKings & translatedBitboard) != 0):
                         theBitboardsObjectCopy.computerKings ^= translatedBitboard
+                        theBitboardsObjectCopy.numComputerKings -=1
                     elif((theBitboardsObjectCopy.computerRooks & translatedBitboard) != 0):
                         theBitboardsObjectCopy.computerRooks ^= translatedBitboard
+                        theBitboardsObjectCopy.numComputerRooks -=1
                     elif((theBitboardsObjectCopy.computerBishops & translatedBitboard) != 0):
                         theBitboardsObjectCopy.computerBishops ^= translatedBitboard
+                        theBitboardsObjectCopy.numComputerBishops -=1
                     elif((theBitboardsObjectCopy.computerQueens & translatedBitboard) != 0):
                         theBitboardsObjectCopy.computerQueens ^= translatedBitboard
+                        theBitboardsObjectCopy.numComputerQueens -=1
                     elif((theBitboardsObjectCopy.computerKnights & translatedBitboard) != 0):
                         theBitboardsObjectCopy.computerKnights ^= translatedBitboard
+                        theBitboardsObjectCopy.numComputerKnights -=1
                     elif((theBitboardsObjectCopy.computerPawns & translatedBitboard) != 0):
                         theBitboardsObjectCopy.computerPawns ^= translatedBitboard
+                        theBitboardsObjectCopy.numComputerPawns -=1
                 finalLegalKnightMoves.append(theBitboardsObjectCopy)
                 
 
