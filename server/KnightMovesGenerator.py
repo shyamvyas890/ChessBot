@@ -1,6 +1,5 @@
 from ChessEnums import Player, Piece
 from DebuggingTools import pretty_print_board
-from BoardState import BoardState
 from UtilityFunctions import splitPieceIntoIndividualBitboards, generateFriendlyMasks, generateOpponentMask
 
 knightInstanceVariableDictionary = {
@@ -17,7 +16,7 @@ sub15 = 0xFF_FF_01_01_01_01_01_01
 sub17 = 0xFF_FF_80_80_80_80_80_80
 
 
-def generateKnightMoves(thePlayer: Player, theBitboardsObject: BoardState):
+def generateKnightMoves(thePlayer: Player, theBitboardsObject):
     individualKnightBitboards = splitPieceIntoIndividualBitboards(knightInstanceVariableDictionary[thePlayer], theBitboardsObject)     
     finalLegalKnightMoves = []
     opponentMask = generateOpponentMask(thePlayer, theBitboardsObject)
@@ -80,7 +79,9 @@ def generateKnightMoves(thePlayer: Player, theBitboardsObject: BoardState):
                     elif((theBitboardsObjectCopy.humanPawns & translatedBitboard) != 0):
                         theBitboardsObjectCopy.humanPawns ^= translatedBitboard
                         theBitboardsObjectCopy.numHumanPawns -= 1
-                finalLegalKnightMoves.append(theBitboardsObjectCopy)
+                    finalLegalKnightMoves = [theBitboardsObjectCopy] + finalLegalKnightMoves
+                else:
+                    finalLegalKnightMoves.append(theBitboardsObjectCopy)
         elif (thePlayer == Player.HUMAN):
             for translatedBitboard in translatedBitboardsP2:
                 newKnightBitboard = translatedBitboard | otherSelectedPlayerKnightsOnCurrentBoard
@@ -105,10 +106,8 @@ def generateKnightMoves(thePlayer: Player, theBitboardsObject: BoardState):
                     elif((theBitboardsObjectCopy.computerPawns & translatedBitboard) != 0):
                         theBitboardsObjectCopy.computerPawns ^= translatedBitboard
                         theBitboardsObjectCopy.numComputerPawns -=1
-                finalLegalKnightMoves.append(theBitboardsObjectCopy)
+                    finalLegalKnightMoves = [theBitboardsObjectCopy] + finalLegalKnightMoves
+                else:
+                    finalLegalKnightMoves.append(theBitboardsObjectCopy)
                 
-
-
-    print(len(finalLegalKnightMoves))
-    for finalMove in finalLegalKnightMoves:
-        pretty_print_board(finalMove.computerKnights)
+    return finalLegalKnightMoves

@@ -1,5 +1,4 @@
 from ChessEnums import Player
-from BoardState import BoardState
 from UtilityFunctions import splitPieceIntoIndividualBitboards, generateOpponentMask, generateFriendlyMasks, modifyBitboardToTakePiece
 RIGHT_BOUND = 0x01_01_01_01_01_01_01_01
 LEFT_BOUND = 0x80_80_80_80_80_80_80_80
@@ -23,7 +22,7 @@ def validateMove(potentialLeftRightPieceMove, friendlyMask, opponentMask, direct
         return 3 #valid move, and it doesn't take an opponent piece, but it hits a boundary so stop searching further
     return 4 #valid move, and it doesn't take an opponent piece or hit a boundary
 
-def generateDiagonalPieceMoves(thePlayer: Player, theBitBoardsObject: BoardState, pieceInstanceVariable):
+def generateDiagonalPieceMoves(thePlayer: Player, theBitBoardsObject, pieceInstanceVariable):
     individualPieceBitboards = splitPieceIntoIndividualBitboards(pieceInstanceVariable, theBitBoardsObject)
     finalLegalPieceMoves = []
     allOpponentPlayerPieces = generateOpponentMask(thePlayer,theBitBoardsObject)
@@ -64,7 +63,7 @@ def generateDiagonalPieceMoves(thePlayer: Player, theBitBoardsObject: BoardState
                 theBitBoardsObjectCopy = theBitBoardsObject.boardClone()
                 if (score == 2):
                     modifyBitboardToTakePiece(theBitBoardsObjectCopy,thePlayer, pieceInstanceVariable, newPieceBitboard, potentialLeftRightPieceMove)
-                    finalLegalPieceMoves.append(theBitBoardsObjectCopy)
+                    finalLegalPieceMoves = [theBitBoardsObjectCopy] + finalLegalPieceMoves
                     break
                 if(score == 3):
                     setattr(theBitBoardsObjectCopy, pieceInstanceVariable, newPieceBitboard)

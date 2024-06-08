@@ -1,6 +1,5 @@
 from ChessEnums import Player, Piece
 from DebuggingTools import pretty_print_board
-from BoardState import BoardState
 from UtilityFunctions import splitPieceIntoIndividualBitboards, generateOpponentMask, generateFriendlyMasks, modifyBitboardToTakePiece
 
 RIGHT_BOUND = 0x01_01_01_01_01_01_01_01
@@ -15,7 +14,7 @@ kingInstanceVariableDictionary = {
 
 diagonalOffsets = (7,9,-9,-7) # southwest, southeast, northwest, northeast
 straightOffsets = (8,-8,1,-1) # south, north, right, left
-def generateKingMoves (thePlayer: Player, theBitBoardsObject: BoardState):
+def generateKingMoves (thePlayer: Player, theBitBoardsObject):
     finalLegalKingMoves = []
     allOpponentPlayerPieces = generateOpponentMask(thePlayer,theBitBoardsObject)
     allOtherCurrentPlayerPieces = generateFriendlyMasks(thePlayer, kingInstanceVariableDictionary[thePlayer], theBitBoardsObject, getattr(theBitBoardsObject, kingInstanceVariableDictionary[thePlayer]))[0]
@@ -48,15 +47,13 @@ def generateKingMoves (thePlayer: Player, theBitBoardsObject: BoardState):
             newKingPosition = currentKing << abs(offset)
         if(newKingPosition & allOpponentPlayerPieces) != 0:
             modifyBitboardToTakePiece(theBitBoardsObjectCopy, thePlayer,kingInstanceVariableDictionary[thePlayer], newKingPosition, newKingPosition)
+            finalLegalKingMoves = [theBitBoardsObjectCopy] + finalLegalKingMoves
         else:
             setattr(theBitBoardsObjectCopy, kingInstanceVariableDictionary[thePlayer], newKingPosition)
-        finalLegalKingMoves.append(theBitBoardsObjectCopy)
+            finalLegalKingMoves.append(theBitBoardsObjectCopy)
     
 
-    print(len(finalLegalKingMoves))
-    for potentialMove in finalLegalKingMoves:
-        pretty_print_board(getattr(potentialMove, kingInstanceVariableDictionary[thePlayer]))
-        pretty_print_board(potentialMove.humanPawns)
+    return finalLegalKingMoves
     
 
     

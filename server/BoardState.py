@@ -1,3 +1,10 @@
+from KnightMovesGenerator import generateKnightMoves
+from RookMovesGenerator import generateRookMoves
+from BishopMovesGenerator import generateBishopMoves
+from KingMoveGenerator import generateKingMoves
+from QueenMoveGenerator import generateQueenMoves
+from PawnMoveGenerator import generatePawnMoves
+from ChessEnums import Player
 class BoardState:
     def __init__(self, 
                  computerKings, computerRooks, computerBishops, computerQueens, 
@@ -237,16 +244,20 @@ class BoardState:
             self._humanQueens,
             self._humanKnights,
             self._humanPawns,
-            self._computerKings,
-            self._computerRooks,
-            self._computerBishops,
-            self._computerQueens,
-            self._computerKnights,
-            self._computerPawns,
-            self._humanKings,
-            self._humanRooks,
+            self._numComputerKings,
+            self._numComputerRooks,
+            self._numComputerBishops,
+            self._numComputerQueens,
+            self._numComputerKnights,
+            self._numComputerPawns,
+            self._numHumanKings,
+            self._numHumanRooks,
             self._numHumanBishops,
             self._numHumanQueens,
             self._numHumanKnights,
             self._numHumanPawns
         )
+    def evaluate(self):
+        return (200*(self.numComputerKings - self.numHumanKings) + 9 * (self.numComputerQueens - self.numHumanQueens) + 5 * (self.numComputerRooks - self.numHumanRooks) + 3* (self.numComputerBishops - self.numHumanBishops + self.numComputerKnights - self.numHumanKnights) + (self.numComputerPawns - self.numHumanPawns) )
+    def children(self, thePlayer: Player):
+        return (*generateKnightMoves(thePlayer, self), *generatePawnMoves(thePlayer, self), *generateBishopMoves(thePlayer, self), *generateRookMoves(thePlayer, self), *generateQueenMoves(thePlayer, self), *generateKingMoves(thePlayer, self))

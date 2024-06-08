@@ -1,6 +1,5 @@
 from ChessEnums import Player, Piece
 from DebuggingTools import pretty_print_board
-from BoardState import BoardState
 from UtilityFunctions import splitPieceIntoIndividualBitboards, generateOpponentMask, generateFriendlyMasks, modifyBitboardToTakePiece
 IS_THE_PIECE_OFF_LEFT_SCREEN = 0x80_00_00_00_00_00_00_00
 IS_THE_PIECE_OFF_RIGHT_SCREEN = 0
@@ -28,7 +27,7 @@ queenInstanceVariableDictionary = {
     Player.COMPUTER: "_computerQueens",
     Player.HUMAN: "_humanQueens"
 }
-def generateStraightLinePieceMoves(thePlayer: Player, theBitBoardsObject: BoardState, pieceInstanceVariable):
+def generateStraightLinePieceMoves(thePlayer: Player, theBitBoardsObject, pieceInstanceVariable):
     individualPieceBitboards = splitPieceIntoIndividualBitboards(pieceInstanceVariable, theBitBoardsObject)
     finalLegalPieceMoves = []
     allOpponentPlayerPieces = generateOpponentMask(thePlayer,theBitBoardsObject)
@@ -50,7 +49,7 @@ def generateStraightLinePieceMoves(thePlayer: Player, theBitBoardsObject: BoardS
                 theBitBoardsObjectCopy = theBitBoardsObject.boardClone()
                 if(score == 3):
                     modifyBitboardToTakePiece(theBitBoardsObjectCopy,thePlayer, pieceInstanceVariable, newPieceBitboard, potentialUpDownPieceMove)
-                    finalLegalPieceMoves.append(theBitBoardsObjectCopy)
+                    finalLegalPieceMoves = [theBitBoardsObjectCopy] + finalLegalPieceMoves
                     break
                 if(score == 4):
                     setattr(theBitBoardsObjectCopy, pieceInstanceVariable, newPieceBitboard)
@@ -81,7 +80,7 @@ def generateStraightLinePieceMoves(thePlayer: Player, theBitBoardsObject: BoardS
                 theBitBoardsObjectCopy = theBitBoardsObject.boardClone()
                 if(score == 2):
                     modifyBitboardToTakePiece(theBitBoardsObjectCopy, thePlayer, pieceInstanceVariable, newPieceBitboard, potentialLeftRightPieceMove)
-                    finalLegalPieceMoves.append(theBitBoardsObjectCopy)
+                    finalLegalPieceMoves = [theBitBoardsObjectCopy] + finalLegalPieceMoves
                     break
                 if(score == 3):
                     setattr(theBitBoardsObjectCopy, pieceInstanceVariable, newPieceBitboard)

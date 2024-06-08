@@ -1,6 +1,5 @@
 from ChessEnums import Player, Piece
-from BoardState import BoardState
-def splitPieceIntoIndividualBitboards (instanceVariableString:str, theBitBoardsObject: BoardState):
+def splitPieceIntoIndividualBitboards (instanceVariableString:str, theBitBoardsObject):
     originalPieceBitboard = getattr(theBitBoardsObject, instanceVariableString)
     individualPieceBitboards = []
     individualBoard = originalPieceBitboard & (~originalPieceBitboard + 1)
@@ -11,12 +10,12 @@ def splitPieceIntoIndividualBitboards (instanceVariableString:str, theBitBoardsO
         individualPieceBitboards.append(individualBoard)
         originalPieceBitboard ^= individualBoard
     return individualPieceBitboards
-def generateOpponentMask (thePlayer: Player, theBitBoardsObject: BoardState):
+def generateOpponentMask (thePlayer: Player, theBitBoardsObject):
     if(thePlayer == Player.COMPUTER):
         return (theBitBoardsObject.humanKings | theBitBoardsObject.humanRooks | theBitBoardsObject.humanBishops | theBitBoardsObject.humanQueens | theBitBoardsObject.humanKnights | theBitBoardsObject.humanPawns)
     elif(thePlayer == Player.HUMAN):
         return (theBitBoardsObject.computerKings | theBitBoardsObject.computerRooks | theBitBoardsObject.computerBishops | theBitBoardsObject.computerQueens | theBitBoardsObject.computerKnights | theBitBoardsObject.computerPawns) 
-def generateFriendlyMasks (thePlayer: Player,thePlayerAndPieceTypeInstanceVariable: str, theBitBoardsObject:BoardState, individualPieceBitboard):
+def generateFriendlyMasks (thePlayer: Player,thePlayerAndPieceTypeInstanceVariable: str, theBitBoardsObject, individualPieceBitboard):
     allOtherCurrentPlayerPieces= None
     if(thePlayer == Player.COMPUTER):
         allOtherCurrentPlayerPieces = theBitBoardsObject.computerKings | theBitBoardsObject.computerRooks | theBitBoardsObject.computerBishops | theBitBoardsObject.computerQueens | theBitBoardsObject.computerKnights | theBitBoardsObject.computerPawns
@@ -25,7 +24,7 @@ def generateFriendlyMasks (thePlayer: Player,thePlayerAndPieceTypeInstanceVariab
     allOtherCurrentPlayerPieces ^= individualPieceBitboard
     allOtherCurrentPlayerPieceTypePieces = ((getattr(theBitBoardsObject, thePlayerAndPieceTypeInstanceVariable)) ^ individualPieceBitboard)
     return (allOtherCurrentPlayerPieces, allOtherCurrentPlayerPieceTypePieces)
-def modifyBitboardToTakePiece (theBitBoardsObjectCopy: BoardState, thePlayer: Player, instanceVariableString: str, newPieceBitboard: int, isolatedPieceBitboard: int):
+def modifyBitboardToTakePiece (theBitBoardsObjectCopy, thePlayer: Player, instanceVariableString: str, newPieceBitboard: int, isolatedPieceBitboard: int):
     setattr(theBitBoardsObjectCopy, instanceVariableString, newPieceBitboard)
     if(thePlayer == Player.COMPUTER):
         if((theBitBoardsObjectCopy.humanKings & isolatedPieceBitboard) != 0):

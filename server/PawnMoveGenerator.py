@@ -1,5 +1,4 @@
 from ChessEnums import Player
-from BoardState import BoardState
 from UtilityFunctions import splitPieceIntoIndividualBitboards, generateOpponentMask, generateFriendlyMasks, modifyBitboardToTakePiece
 
 PAWN_INSTANCE_VARIABLE_DICTIONARY = {
@@ -17,7 +16,7 @@ PAWN_DEFAULT_DICTIONARY = {
 RIGHT_BOUND = 0x01_01_01_01_01_01_01_01
 LEFT_BOUND = 0x80_80_80_80_80_80_80_80
 
-def generatePawnMoves(thePlayer: Player, theBitboardsObject: BoardState):
+def generatePawnMoves(thePlayer: Player, theBitboardsObject):
     individualPawnBitboards = splitPieceIntoIndividualBitboards(PAWN_INSTANCE_VARIABLE_DICTIONARY[thePlayer], theBitboardsObject)
     finalLegalPawnMoves = []
     allOpponentPlayerPieces = generateOpponentMask(thePlayer, theBitboardsObject)
@@ -50,8 +49,9 @@ def generatePawnMoves(thePlayer: Player, theBitboardsObject: BoardState):
                     theBitboardsObjectCopy.numComputerQueens += 1
                     theBitboardsObjectCopy2.computerKnights |= potentialMove
                     theBitboardsObjectCopy2.numComputerKnights += 1
-                    finalLegalPawnMoves.append(theBitboardsObjectCopy2)
-                finalLegalPawnMoves.append(theBitboardsObjectCopy)     
+                    finalLegalPawnMoves = [theBitboardsObjectCopy, theBitboardsObjectCopy2] + finalLegalPawnMoves
+                else:
+                    finalLegalPawnMoves.append(theBitboardsObjectCopy)     
         else:    
             potentialOffsetsForThisPiece = []
             if((individualPawn << 8) & allPiecesOtherThanThisPawn) == 0:
@@ -78,8 +78,9 @@ def generatePawnMoves(thePlayer: Player, theBitboardsObject: BoardState):
                     theBitboardsObjectCopy.numHumanQueens += 1
                     theBitboardsObjectCopy2.humanKnights |= potentialMove
                     theBitboardsObjectCopy2.numHumanKnights += 1
-                    finalLegalPawnMoves.append(theBitboardsObjectCopy2)
-                finalLegalPawnMoves.append(theBitboardsObjectCopy)
+                    finalLegalPawnMoves = [theBitboardsObjectCopy, theBitboardsObjectCopy2] + finalLegalPawnMoves
+                else:
+                    finalLegalPawnMoves.append(theBitboardsObjectCopy)
     return finalLegalPawnMoves
 
 

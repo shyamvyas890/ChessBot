@@ -1,14 +1,8 @@
 from flask import Flask
 from ChessEnums import Player
-from BoardState import BoardState
-from DebuggingTools import pretty_print_board
 from ArrayToBitboard import convert2DArrayToBitboards
-from KnightMovesGenerator import generateKnightMoves
-from RookMovesGenerator import generateRookMoves
-from BishopMovesGenerator import generateBishopMoves
-from KingMoveGenerator import generateKingMoves
-from QueenMoveGenerator import generateQueenMoves
-from PawnMoveGenerator import generatePawnMoves
+from DebuggingTools import board_to_2D_array
+import time
 app = Flask(__name__)
 
 @app.route('/')
@@ -25,14 +19,59 @@ def hello():
     ]
 
     bitboardsObject = convert2DArrayToBitboards(initial_chess_board)
-    pawnMoves = generatePawnMoves(Player.COMPUTER, bitboardsObject)
-    print(len(pawnMoves))
+    t0 = time.time()
+    score = minimaxWithAlphaBeta(bitboardsObject, float('-inf'), float('inf'), True, 6, 6)
+    # score = minimaxWithAlphaBeta(bitboardsObject, float('-inf'), float('inf'), True, 1)
+    t1 = time.time()
+    board_to_2D_array(score)
+    print(t1-t0)
+
+    
     return "Test"
     
 
 
+# alpha = best maximizer value discovered from this and any particular ancestor node (of this node) that happened to be discovered so far
+# beta = best minimizer value discovered from this and any particular ancestor node (of this node) that happened to be discovered so far
+def minimaxWithAlphaBeta(node, alpha: int, beta: int, isMaximizer: bool, depth, originalDepth):
+    if(depth == 0 or node.numComputerKings == 0 or node.numHumanKings == 0):
+        x= node.evaluate()
+        return x
+    if(isMaximizer):
+        bestValDiscoveredSoFarForThisNode = float('-inf')
+        nodeRepresentingBestVal = None
+        currentAlpha = alpha
+        children = node.children(Player.COMPUTER)
+        for childNode in children:
+            if(currentAlpha >= beta):
+                break
+            evaluation = minimaxWithAlphaBeta(childNode, currentAlpha, beta, False, depth - 1, originalDepth)
+            currentAlpha = max(currentAlpha, evaluation)
+            if(evaluation > bestValDiscoveredSoFarForThisNode):
+                if(depth == originalDepth):
+                    nodeRepresentingBestVal = childNode
+                bestValDiscoveredSoFarForThisNode = evaluation
+        if(depth == originalDepth):
+            return nodeRepresentingBestVal
+        return bestValDiscoveredSoFarForThisNode
+    else:
+        bestValDiscoveredSoFarForThisNode = float('inf')
+        currentBeta = beta
+        children = node.children(Player.HUMAN)
+        for childNode in children:
+            if(alpha >= currentBeta):
+                break
+            evaluation = minimaxWithAlphaBeta(childNode, alpha, currentBeta, True, depth-1, originalDepth)
+            currentBeta = min(currentBeta, evaluation)
+            bestValDiscoveredSoFarForThisNode = min(bestValDiscoveredSoFarForThisNode, evaluation)
+        return bestValDiscoveredSoFarForThisNode
 
 
+
+    
+    
+
+    
 
 
             
