@@ -5,6 +5,7 @@ from KingMoveGenerator import generateKingMoves
 from QueenMoveGenerator import generateQueenMoves
 from PawnMoveGenerator import generatePawnMoves
 from ChessEnums import Player
+from DebuggingTools import board_to_2D_array
 class BoardState:
     def __init__(self, 
                  computerKings, computerRooks, computerBishops, computerQueens, 
@@ -260,4 +261,28 @@ class BoardState:
     def evaluate(self):
         return (200*(self.numComputerKings - self.numHumanKings) + 9 * (self.numComputerQueens - self.numHumanQueens) + 5 * (self.numComputerRooks - self.numHumanRooks) + 3* (self.numComputerBishops - self.numHumanBishops + self.numComputerKnights - self.numHumanKnights) + (self.numComputerPawns - self.numHumanPawns) )
     def children(self, thePlayer: Player):
+        # theKnights = generateKnightMoves(thePlayer, self)
+        # thePawns = generatePawnMoves(thePlayer, self)
+        # theBishops = generateBishopMoves(thePlayer, self)
+        # theRooks = generateRookMoves(thePlayer, self)
+        # theQueens = generateQueenMoves(thePlayer, self)
+        # theKings = generateKingMoves(thePlayer, self)
+        # print("KNIGHT MOVES")
+        # for theKnight in theKnights:
+        #     board_to_2D_array(theKnight)
+        # print("PAWN MOVES")
+        # for thePawn in thePawns:
+        #     board_to_2D_array(thePawn)
+        # print("BISHOP MOVES")
+        # for theBishop in theBishops:
+        #     board_to_2D_array(theBishop)
+        # print("ROOK MOVES")
+        # for theRook in theRooks:
+        #     board_to_2D_array(theRook)
+        # print("QUEEN MOVES")
+        # for theQueen in theQueens:
+        #     board_to_2D_array(theQueen)
+        # print("KING MOVES")
+        # for theKing in theKings:
+        #     board_to_2D_array(theKing)
         return (*generateKnightMoves(thePlayer, self), *generatePawnMoves(thePlayer, self), *generateBishopMoves(thePlayer, self), *generateRookMoves(thePlayer, self), *generateQueenMoves(thePlayer, self), *generateKingMoves(thePlayer, self))

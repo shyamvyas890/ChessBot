@@ -2,6 +2,8 @@ from ChessEnums import Player, Piece
 def splitPieceIntoIndividualBitboards (instanceVariableString:str, theBitBoardsObject):
     originalPieceBitboard = getattr(theBitBoardsObject, instanceVariableString)
     individualPieceBitboards = []
+    if(originalPieceBitboard == 0):
+        return individualPieceBitboards
     individualBoard = originalPieceBitboard & (~originalPieceBitboard + 1)
     individualPieceBitboards.append(individualBoard)
     originalPieceBitboard ^= individualBoard
