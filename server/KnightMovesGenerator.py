@@ -114,6 +114,7 @@ def generateKnightMoves(thePlayer: Player, theBitboardsObject):
 
 
 def generateKnightMovesCount(thePlayer: Player, theBitboardsObject):
+    total = 0
     individualKnightBitboards = splitPieceIntoIndividualBitboards(knightInstanceVariableDictionary[thePlayer], theBitboardsObject)
     for individualKnight in individualKnightBitboards:
         unviolatedMasks = []
@@ -149,7 +150,8 @@ def generateKnightMovesCount(thePlayer: Player, theBitboardsObject):
         for i in range(len(translatedBitboards)):
             if((translatedBitboards[i] & allOtherSelectedPlayerPieces) == 0):
                 translatedBitboardsP2.append(translatedBitboards[i])
-        return len(translatedBitboardsP2)
+        total += len(translatedBitboardsP2)
+    return total
 
 
 
