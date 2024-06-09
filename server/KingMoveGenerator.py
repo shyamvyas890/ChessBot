@@ -57,7 +57,28 @@ def generateKingMoves (thePlayer: Player, theBitBoardsObject):
     
 
     
+def generateKingMovesCount(thePlayer: Player, theBitBoardsObject):
+    allOtherCurrentPlayerPieces = generateFriendlyMasks(thePlayer, kingInstanceVariableDictionary[thePlayer], theBitBoardsObject, getattr(theBitBoardsObject, kingInstanceVariableDictionary[thePlayer]))[0]
+    currentKing = getattr(theBitBoardsObject, kingInstanceVariableDictionary[thePlayer])
+    legalMoves = 0
+    if ( ((currentKing & LEFT_BOUND) == 0) and ((currentKing & LOWER_BOUND) == 0) and (((currentKing >> 7) & allOtherCurrentPlayerPieces) == 0)):
+        legalMoves += 1
+    if ( ((currentKing & RIGHT_BOUND) == 0) and ((currentKing & LOWER_BOUND) == 0) and (((currentKing >> 9) & allOtherCurrentPlayerPieces) == 0)):
+        legalMoves += 1
+    if ( ((currentKing & LEFT_BOUND) == 0) and ((currentKing & UPPER_BOUND) == 0) and (((currentKing << 9) & allOtherCurrentPlayerPieces) == 0)):
+        legalMoves += 1
+    if ( ((currentKing & RIGHT_BOUND) == 0) and ((currentKing & UPPER_BOUND) == 0) and (((currentKing << 7) & allOtherCurrentPlayerPieces) == 0)):
+        legalMoves += 1
+    if(((currentKing & LEFT_BOUND) == 0) and (((currentKing << 1) & allOtherCurrentPlayerPieces) == 0)):
+        legalMoves += 1
+    if(((currentKing & RIGHT_BOUND) == 0) and (((currentKing >> 1) & allOtherCurrentPlayerPieces) == 0)):
+        legalMoves += 1
+    if(((currentKing & UPPER_BOUND) == 0) and (((currentKing <<8) & allOtherCurrentPlayerPieces) == 0)):
+        legalMoves += 1
+    if(((currentKing & LOWER_BOUND) == 0) and (((currentKing >>8) & allOtherCurrentPlayerPieces) == 0)):
+        legalMoves += 1
     
+    return legalMoves
 
     
 

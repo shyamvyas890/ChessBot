@@ -1,12 +1,11 @@
-from ChessEnums import Player, Piece
-from DebuggingTools import pretty_print_board
+from ChessEnums import Player
 from UtilityFunctions import splitPieceIntoIndividualBitboards, generateOpponentMask, generateFriendlyMasks, modifyBitboardToTakePiece
 IS_THE_PIECE_OFF_LEFT_SCREEN = 0x80_00_00_00_00_00_00_00
 IS_THE_PIECE_OFF_RIGHT_SCREEN = 0
 RIGHT_BOUND = 0x01_01_01_01_01_01_01_01
 LEFT_BOUND = 0x80_80_80_80_80_80_80_80
-def isUpDownPieceMoveValid (newIndividualPieceBitboard, leftScreenBound, friendlyMask, opponentMask):
-    if((newIndividualPieceBitboard > leftScreenBound) or (newIndividualPieceBitboard == 0)):
+def isUpDownPieceMoveValid (newIndividualPieceBitboard, friendlyMask, opponentMask):
+    if((newIndividualPieceBitboard > IS_THE_PIECE_OFF_LEFT_SCREEN) or (newIndividualPieceBitboard == 0)):
         return 1 #invalid move because off the board, so move will be discarded, and further search in this direction will be stopped
     if((newIndividualPieceBitboard & friendlyMask) != 0):
         return 2 # invalid move because you hit a friendly piece searching in this direction, so move will be discarded, and further search in this direction will be stopped
@@ -42,7 +41,7 @@ def generateStraightLinePieceMoves(thePlayer: Player, theBitBoardsObject, pieceI
             elif (index == 1):
                 potentialUpDownPieceMove = individualPiece >> 8
             while True:
-                score = isUpDownPieceMoveValid(potentialUpDownPieceMove,IS_THE_PIECE_OFF_LEFT_SCREEN,allOtherCurrentPlayerPieces, allOpponentPlayerPieces)
+                score = isUpDownPieceMoveValid(potentialUpDownPieceMove,allOtherCurrentPlayerPieces, allOpponentPlayerPieces)
                 if(score == 1 or score == 2):
                     break
                 newPieceBitboard = allOtherCurrentPlayerPiecesOfSameType | potentialUpDownPieceMove
@@ -94,3 +93,63 @@ def generateStraightLinePieceMoves(thePlayer: Player, theBitBoardsObject, pieceI
                     elif(index == 1):
                         potentialLeftRightPieceMove >>= 1
     return finalLegalPieceMoves
+
+def generateStraightLinePieceMovesCount(thePlayer:Player, theBitBoardsObject, pieceInstanceVariable):
+    individualPieceBitboards = splitPieceIntoIndividualBitboards(pieceInstanceVariable, theBitBoardsObject)
+    finalLegalPieceMoveCount = 0
+    allOpponentPlayerPieces = generateOpponentMask(thePlayer,theBitBoardsObject)
+    for individualPiece in individualPieceBitboards:
+        #other friendly pieces mask
+        allOtherCurrentPlayerPieces = generateFriendlyMasks(thePlayer, pieceInstanceVariable, theBitBoardsObject, individualPiece)[0]
+        #up and down
+        for index in range(2):
+            potentialUpDownPieceMove = None
+            if (index == 0):
+                potentialUpDownPieceMove = individualPiece << 8
+            elif (index == 1):
+                potentialUpDownPieceMove = individualPiece >> 8
+            while True:
+                score = isUpDownPieceMoveValid(potentialUpDownPieceMove,allOtherCurrentPlayerPieces, allOpponentPlayerPieces)
+                if(score == 1 or score == 2):
+                    break
+                if(score == 3):
+                    finalLegalPieceMoveCount += 1
+                    break
+                if(score == 4):
+                    finalLegalPieceMoveCount += 1
+                    if(index == 0):
+                        potentialUpDownPieceMove <<= 8
+                    elif(index == 1):
+                        potentialUpDownPieceMove >>= 8
+        for index in range(2):
+            if(index == 0 and ((individualPiece & LEFT_BOUND) != 0)): # check if they are already on the boundary and if so, there's no possible moves
+                continue
+            if(index == 1 and ((individualPiece & RIGHT_BOUND) != 0)):
+                continue
+            potentialLeftRightPieceMove = None
+            if(index == 0):
+                potentialLeftRightPieceMove = individualPiece << 1
+            elif (index == 1):
+                potentialLeftRightPieceMove = individualPiece >> 1
+            while True:
+                score = None
+                if(index == 0):
+                    score = isLeftRightPieceMoveValid(potentialLeftRightPieceMove, allOtherCurrentPlayerPieces, allOpponentPlayerPieces, True)
+                elif (index ==1):
+                    score = isLeftRightPieceMoveValid(potentialLeftRightPieceMove, allOtherCurrentPlayerPieces, allOpponentPlayerPieces, False)
+                if(score == 1):
+                    break
+                if(score == 2 or score == 3):
+                    finalLegalPieceMoveCount += 1
+                    break
+                if(score == 4):
+                    finalLegalPieceMoveCount += 1
+                    if(index == 0):
+                        potentialLeftRightPieceMove <<= 1
+                    elif(index == 1):
+                        potentialLeftRightPieceMove >>= 1
+    return finalLegalPieceMoveCount
+
+
+
+

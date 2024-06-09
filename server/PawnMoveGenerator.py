@@ -16,6 +16,7 @@ PAWN_DEFAULT_DICTIONARY = {
 RIGHT_BOUND = 0x01_01_01_01_01_01_01_01
 LEFT_BOUND = 0x80_80_80_80_80_80_80_80
 
+# fix bug where pawn can advance two moves ahead even if in the first piece another piece already.
 def generatePawnMoves(thePlayer: Player, theBitboardsObject):
     individualPawnBitboards = splitPieceIntoIndividualBitboards(PAWN_INSTANCE_VARIABLE_DICTIONARY[thePlayer], theBitboardsObject)
     finalLegalPawnMoves = []
@@ -82,6 +83,33 @@ def generatePawnMoves(thePlayer: Player, theBitboardsObject):
                 else:
                     finalLegalPawnMoves.append(theBitboardsObjectCopy)
     return finalLegalPawnMoves
+def generatePawnMoveCount (thePlayer: Player, theBitboardsObject):
+    individualPawnBitboards = splitPieceIntoIndividualBitboards(PAWN_INSTANCE_VARIABLE_DICTIONARY[thePlayer], theBitboardsObject)
+    allOpponentPlayerPieces = generateOpponentMask(thePlayer, theBitboardsObject)
+    totalPawnMoves = 0
+    for individualPawn in individualPawnBitboards:
+        allOtherCurrentPlayerPieces = generateFriendlyMasks(thePlayer,PAWN_INSTANCE_VARIABLE_DICTIONARY[thePlayer], theBitboardsObject, individualPawn)[0]
+        allPiecesOtherThanThisPawn = allOtherCurrentPlayerPieces | allOpponentPlayerPieces
+        if(thePlayer == Player.COMPUTER):
+            if((individualPawn >> 8) & allPiecesOtherThanThisPawn) == 0:
+                totalPawnMoves += 1
+            if(((individualPawn & PAWN_DEFAULT_DICTIONARY[thePlayer]) != 0) and ((individualPawn >> 16) & allPiecesOtherThanThisPawn) == 0):
+                totalPawnMoves += 1
+            if((individualPawn & LEFT_BOUND) == 0) and  (((individualPawn >> 7) & allOpponentPlayerPieces) != 0):
+                totalPawnMoves += 1
+            if((individualPawn & RIGHT_BOUND) == 0) and  (((individualPawn >> 9) & allOpponentPlayerPieces) != 0):
+                totalPawnMoves += 1     
+        else:
+            if((individualPawn << 8) & allPiecesOtherThanThisPawn) == 0:
+                totalPawnMoves += 1
+            if(((individualPawn & PAWN_DEFAULT_DICTIONARY[thePlayer]) != 0) and ((individualPawn << 16) & allPiecesOtherThanThisPawn) == 0):
+                totalPawnMoves += 1
+            if((individualPawn & LEFT_BOUND) == 0) and  (((individualPawn << 9) & allOpponentPlayerPieces) != 0):
+                totalPawnMoves += 1
+            if((individualPawn & RIGHT_BOUND) == 0) and  (((individualPawn << 7) & allOpponentPlayerPieces) != 0):
+                totalPawnMoves += 1
+    return totalPawnMoves
+
 
 
 

@@ -81,3 +81,54 @@ def generateDiagonalPieceMoves(thePlayer: Player, theBitBoardsObject, pieceInsta
                     elif (index == 3):
                         potentialLeftRightPieceMove <<= 7
     return finalLegalPieceMoves
+
+def generateDiagonalPieceMovesCount(thePlayer: Player, theBitBoardsObject, pieceInstanceVariable):
+    individualPieceBitboards = splitPieceIntoIndividualBitboards(pieceInstanceVariable, theBitBoardsObject)
+    finalLegalPieceMovesCount = 0
+    allOpponentPlayerPieces = generateOpponentMask(thePlayer,theBitBoardsObject)
+    for individualPiece in individualPieceBitboards:
+        allOtherCurrentPlayerPieces = generateFriendlyMasks(thePlayer, pieceInstanceVariable, theBitBoardsObject, individualPiece)[0]
+        for index in range(4):
+            if (index == 0 and ((individualPiece & LEFT_BOUND) != 0) or ((individualPiece & LOWER_BOUND) != 0)):
+                continue
+            if (index == 1 and ((individualPiece & RIGHT_BOUND) != 0) or ((individualPiece & LOWER_BOUND) != 0)):
+                continue
+            if (index == 2 and ((individualPiece & LEFT_BOUND) != 0) or ((individualPiece & UPPER_BOUND) != 0)):
+                continue
+            if (index == 3 and ((individualPiece & RIGHT_BOUND) != 0) or ((individualPiece & UPPER_BOUND) != 0)):
+                continue 
+            potentialLeftRightPieceMove = None
+            if (index == 0):
+                potentialLeftRightPieceMove = individualPiece >> 7
+            elif (index == 1):
+                potentialLeftRightPieceMove = individualPiece >> 9
+            elif (index == 2):
+                potentialLeftRightPieceMove = individualPiece << 9
+            elif (index == 3):
+                potentialLeftRightPieceMove = individualPiece << 7
+            while True:
+                score = None
+                if(index == 0):
+                    score = validateMove(potentialLeftRightPieceMove, allOtherCurrentPlayerPieces, allOpponentPlayerPieces, 1)
+                elif (index == 1):
+                    score = validateMove(potentialLeftRightPieceMove, allOtherCurrentPlayerPieces, allOpponentPlayerPieces, 2)
+                elif (index == 2):
+                    score = validateMove(potentialLeftRightPieceMove, allOtherCurrentPlayerPieces, allOpponentPlayerPieces, 3)
+                elif (index == 3):
+                    score = validateMove(potentialLeftRightPieceMove, allOtherCurrentPlayerPieces, allOpponentPlayerPieces, 4)
+                if(score == 1):
+                    break
+                if (score == 2 or score == 3):
+                    finalLegalPieceMovesCount += 1
+                    break
+                if (score == 4):
+                    finalLegalPieceMovesCount += 1
+                    if(index == 0):
+                        potentialLeftRightPieceMove >>= 7
+                    elif (index == 1):
+                        potentialLeftRightPieceMove >>= 9
+                    if(index == 2):
+                        potentialLeftRightPieceMove <<= 9
+                    elif (index == 3):
+                        potentialLeftRightPieceMove <<= 7
+    return finalLegalPieceMovesCount

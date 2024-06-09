@@ -111,3 +111,45 @@ def generateKnightMoves(thePlayer: Player, theBitboardsObject):
                     finalLegalKnightMoves.append(theBitboardsObjectCopy)
                 
     return finalLegalKnightMoves
+
+
+def generateKnightMovesCount(thePlayer: Player, theBitboardsObject):
+    individualKnightBitboards = splitPieceIntoIndividualBitboards(knightInstanceVariableDictionary[thePlayer], theBitboardsObject)
+    for individualKnight in individualKnightBitboards:
+        unviolatedMasks = []
+        if((add6 & individualKnight) == 0):
+            unviolatedMasks.append(6)
+        if((add10 & individualKnight) == 0):
+            unviolatedMasks.append(10)
+        if((add15 & individualKnight) == 0):
+            unviolatedMasks.append(15)
+        if((add17 & individualKnight) == 0):
+            unviolatedMasks.append(17)
+        
+        if((sub6 & individualKnight) == 0):
+            unviolatedMasks.append(-6)
+        if((sub10 & individualKnight) == 0):
+            unviolatedMasks.append(-10)
+        if((sub15 & individualKnight) == 0):
+            unviolatedMasks.append(-15)
+        if((sub17 & individualKnight) == 0):
+            unviolatedMasks.append(-17)
+
+        allOtherSelectedPlayerPieces = generateFriendlyMasks(thePlayer, knightInstanceVariableDictionary[thePlayer], theBitboardsObject, individualKnight)[0]
+        translatedBitboards = []
+        for mask in unviolatedMasks:
+            if(mask>0):
+                translated = individualKnight >> mask
+                translatedBitboards.append(translated)
+            else:
+                translated = individualKnight << abs(mask)
+                translatedBitboards.append(translated)
+        translatedBitboardsP2 = []
+
+        for i in range(len(translatedBitboards)):
+            if((translatedBitboards[i] & allOtherSelectedPlayerPieces) == 0):
+                translatedBitboardsP2.append(translatedBitboards[i])
+        return len(translatedBitboardsP2)
+
+
+
