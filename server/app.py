@@ -3,6 +3,7 @@ from ChessEnums import Player
 from ArrayToBitboard import convert2DArrayToBitboards
 from DebuggingTools import board_to_2D_array
 from UtilityFunctions import splitPieceIntoIndividualBitboards
+from KnightMovesGenerator import generateKnightMovesCount
 import time
 app = Flask(__name__)
 
@@ -10,63 +11,23 @@ app = Flask(__name__)
 def hello():
 
     initial_chess_board = [
-        ['R', 'N', 'B', 'Q', 'K', 'B', ' ', 'R'],  
-        [' ', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],   
+        ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],  
+        ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],   
         [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  
-        ['p', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  
-        ['q', ' ', 'b', ' ', ' ', 'p', ' ', ' '], 
-        ['p', ' ', ' ', ' ', 'p', ' ', ' ', ' '], 
-        [' ', ' ', ' ', 'p', ' ', ' ', 'p', 'p'],  
-        ['r', 'n', 'b', ' ', 'k', ' ', 'n', 'r']   
+        [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  
+        [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+        [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+        ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],  
+        ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r']   
     ]
-
-
-    # initial_chess_board = [
-    #     [' ', 'R', 'B', 'Q', 'K', 'B', 'q', ' '],  
-    #     ['P', ' ', ' ', 'P', 'P', ' ', ' ', ' '],   
-    #     [' ', ' ', ' ', ' ', ' ', ' ', 'P', ' '],  
-    #     [' ', ' ', ' ', ' ', ' ', 'P', ' ', 'P'],  
-    #     [' ', 'p', ' ', ' ', ' ', 'p', ' ', 'p'], 
-    #     ['b', ' ', ' ', ' ', 'p', ' ', 'p', ' '], 
-    #     ['p', ' ', ' ', ' ', 'b', ' ', ' ', ' '],  
-    #     [' ', 'r', ' ', ' ', 'k', ' ', 'n', 'r']   
-    # ]
-
-    # initial_chess_board = [
-    #     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  
-    #     ['P', ' ', ' ', ' ', ' ', ' ', ' ', ' '],   
-    #     [' ', 'R', ' ', ' ', 'N', ' ', ' ', ' '],  
-    #     [' ', ' ', ' ', 'Q', ' ', ' ', ' ', ' '],  
-    #     [' ', ' ', 'B', ' ', ' ', ' ', ' ', ' '], 
-    #     [' ', ' ', ' ', ' ', ' ', 'K', ' ', ' '], 
-    #     ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],  
-    #     ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r']   
-    # ]
-
-    # initial_chess_board = [
-    #     ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],  
-    #     ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],   
-    #     [' ', ' ', 'k', ' ', ' ', ' ', ' ', ' '],  
-    #     [' ', ' ', ' ', ' ', ' ', 'b', ' ', ' '],  
-    #     [' ', ' ', ' ', ' ', 'q', ' ', ' ', ' '], 
-    #     [' ', ' ', ' ', 'n', ' ', ' ', 'r', ' '], 
-    #     [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'p'],
-    #     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']  
-    # ]
 
     bitboardsObject = convert2DArrayToBitboards(initial_chess_board)
 
-
-
     t0 = time.time()
-    score = minimaxWithAlphaBeta(bitboardsObject, float('-inf'), float('inf'), True, 5, 5)
-    # # score = minimaxWithAlphaBeta(bitboardsObject, float('-inf'), float('inf'), True, 1)
+    score = minimaxWithAlphaBeta(bitboardsObject, float('-inf'), float('inf'), True, 4, 4)
     t1 = time.time()
     board_to_2D_array(score)
     print(t1-t0)
-    # bitboardsObject.children(Player.COMPUTER)
-    # for childNode in bitboardsObject.children(Player.COMPUTER):
-    #     board_to_2D_array(childNode)
 
     
     return "Test"
@@ -77,8 +38,7 @@ def hello():
 # beta = best minimizer value discovered from this and any particular ancestor node (of this node) that happened to be discovered so far
 def minimaxWithAlphaBeta(node, alpha: int, beta: int, isMaximizer: bool, depth, originalDepth):
     if(depth == 0 or node.numComputerKings == 0 or node.numHumanKings == 0):
-        x= node.evaluate()
-        return x
+        return node.evaluate()
     if(isMaximizer):
         bestValDiscoveredSoFarForThisNode = float('-inf')
         nodeRepresentingBestVal = None

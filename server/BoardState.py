@@ -1,9 +1,9 @@
-from KnightMovesGenerator import generateKnightMoves
-from RookMovesGenerator import generateRookMoves
-from BishopMovesGenerator import generateBishopMoves
-from KingMoveGenerator import generateKingMoves
-from QueenMoveGenerator import generateQueenMoves
-from PawnMoveGenerator import generatePawnMoves
+from KnightMovesGenerator import generateKnightMoves, generateKnightMovesCount
+from RookMovesGenerator import generateRookMoves, generateRookMovesCount
+from BishopMovesGenerator import generateBishopMoves, generateBishopMovesCount
+from KingMoveGenerator import generateKingMoves, generateKingMovesCount
+from QueenMoveGenerator import generateQueenMoves, generateQueenMovesCount
+from PawnMoveGenerator import generatePawnMoves, generatePawnMoveCount
 from ChessEnums import Player
 from DebuggingTools import board_to_2D_array
 class BoardState:
@@ -258,8 +258,34 @@ class BoardState:
             self._numHumanKnights,
             self._numHumanPawns
         )
+    
+
+    '''
+    Mobility Weights:
+    Pawn, King: 1
+    Queen: 5
+    Bishop, Rook: 3
+    Knight: 4
+
+    '''
     def evaluate(self):
-        return (200*(self.numComputerKings - self.numHumanKings) + 9 * (self.numComputerQueens - self.numHumanQueens) + 5 * (self.numComputerRooks - self.numHumanRooks) + 3* (self.numComputerBishops - self.numHumanBishops + self.numComputerKnights - self.numHumanKnights) + (self.numComputerPawns - self.numHumanPawns) )
+        try:
+            return (
+                200*(self.numComputerKings - self.numHumanKings) + 
+                9 * (self.numComputerQueens - self.numHumanQueens) + 
+                5 * (self.numComputerRooks - self.numHumanRooks) + 
+                3 * (self.numComputerBishops - self.numHumanBishops + self.numComputerKnights - self.numHumanKnights) + 
+                (self.numComputerPawns - self.numHumanPawns) +
+                (generatePawnMoveCount(Player.COMPUTER, self) - generatePawnMoveCount(Player.HUMAN, self) + generateKingMovesCount(Player.COMPUTER, self) - generateKingMovesCount(Player.HUMAN, self)) +
+                5 * (generateQueenMovesCount(Player.COMPUTER, self) - generateQueenMovesCount(Player.HUMAN, self)) +
+                3 * (generateBishopMovesCount(Player.COMPUTER, self) - generateBishopMovesCount(Player.HUMAN, self) + generateRookMovesCount(Player.COMPUTER, self) - generateRookMovesCount(Player.HUMAN, self)) +
+                4 * (generateKnightMovesCount(Player.COMPUTER,self) - generateKnightMovesCount(Player.HUMAN, self))            
+                )
+        except TypeError as e:
+            print(e)
+            board_to_2D_array(self)
+            raise e
+
     def children(self, thePlayer: Player):
         # theKnights = generateKnightMoves(thePlayer, self)
         # thePawns = generatePawnMoves(thePlayer, self)
