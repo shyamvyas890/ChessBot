@@ -16,7 +16,6 @@ PAWN_DEFAULT_DICTIONARY = {
 RIGHT_BOUND = 0x01_01_01_01_01_01_01_01
 LEFT_BOUND = 0x80_80_80_80_80_80_80_80
 
-# fix bug where pawn can advance two moves ahead even if in the first piece another piece already.
 def generatePawnMoves(thePlayer: Player, theBitboardsObject):
     individualPawnBitboards = splitPieceIntoIndividualBitboards(PAWN_INSTANCE_VARIABLE_DICTIONARY[thePlayer], theBitboardsObject)
     finalLegalPawnMoves = []
@@ -28,7 +27,7 @@ def generatePawnMoves(thePlayer: Player, theBitboardsObject):
             potentialOffsetsForThisPiece = []
             if((individualPawn >> 8) & allPiecesOtherThanThisPawn) == 0:
                 potentialOffsetsForThisPiece.append(8)
-            if(((individualPawn & PAWN_DEFAULT_DICTIONARY[thePlayer]) != 0) and ((individualPawn >> 16) & allPiecesOtherThanThisPawn) == 0):
+            if(((individualPawn & PAWN_DEFAULT_DICTIONARY[thePlayer]) != 0) and (((individualPawn >> 16) | (individualPawn >> 8)) & allPiecesOtherThanThisPawn) == 0):
                 potentialOffsetsForThisPiece.append(16)
             if((individualPawn & LEFT_BOUND) == 0) and  (((individualPawn >> 7) & allOpponentPlayerPieces) != 0):
                 potentialOffsetsForThisPiece.append(7)
@@ -57,7 +56,7 @@ def generatePawnMoves(thePlayer: Player, theBitboardsObject):
             potentialOffsetsForThisPiece = []
             if((individualPawn << 8) & allPiecesOtherThanThisPawn) == 0:
                 potentialOffsetsForThisPiece.append(8)
-            if(((individualPawn & PAWN_DEFAULT_DICTIONARY[thePlayer]) != 0) and ((individualPawn << 16) & allPiecesOtherThanThisPawn) == 0):
+            if(((individualPawn & PAWN_DEFAULT_DICTIONARY[thePlayer]) != 0) and (((individualPawn << 16) | (individualPawn << 8)) & allPiecesOtherThanThisPawn) == 0):
                 potentialOffsetsForThisPiece.append(16)
             if((individualPawn & LEFT_BOUND) == 0) and  (((individualPawn << 9) & allOpponentPlayerPieces) != 0):
                 potentialOffsetsForThisPiece.append(9)
@@ -93,7 +92,7 @@ def generatePawnMoveCount (thePlayer: Player, theBitboardsObject):
         if(thePlayer == Player.COMPUTER):
             if((individualPawn >> 8) & allPiecesOtherThanThisPawn) == 0:
                 totalPawnMoves += 1
-            if(((individualPawn & PAWN_DEFAULT_DICTIONARY[thePlayer]) != 0) and ((individualPawn >> 16) & allPiecesOtherThanThisPawn) == 0):
+            if(((individualPawn & PAWN_DEFAULT_DICTIONARY[thePlayer]) != 0) and (((individualPawn >> 16) | (individualPawn >> 8)) & allPiecesOtherThanThisPawn) == 0):
                 totalPawnMoves += 1
             if((individualPawn & LEFT_BOUND) == 0) and  (((individualPawn >> 7) & allOpponentPlayerPieces) != 0):
                 totalPawnMoves += 1
@@ -102,7 +101,7 @@ def generatePawnMoveCount (thePlayer: Player, theBitboardsObject):
         else:
             if((individualPawn << 8) & allPiecesOtherThanThisPawn) == 0:
                 totalPawnMoves += 1
-            if(((individualPawn & PAWN_DEFAULT_DICTIONARY[thePlayer]) != 0) and ((individualPawn << 16) & allPiecesOtherThanThisPawn) == 0):
+            if(((individualPawn & PAWN_DEFAULT_DICTIONARY[thePlayer]) != 0) and (((individualPawn << 16) | (individualPawn << 8)) & allPiecesOtherThanThisPawn) == 0):
                 totalPawnMoves += 1
             if((individualPawn & LEFT_BOUND) == 0) and  (((individualPawn << 9) & allOpponentPlayerPieces) != 0):
                 totalPawnMoves += 1
