@@ -4,7 +4,9 @@ from BishopMovesGenerator import generateBishopMoves, generateBishopMovesCount
 from KingMoveGenerator import generateKingMoves, generateKingMovesCount
 from QueenMoveGenerator import generateQueenMoves, generateQueenMovesCount
 from PawnMoveGenerator import generatePawnMoves, generatePawnMoveCount
+from PieceSquareTables import HUMAN_PAWN_PST, COMPUTER_PAWN_PST, HUMAN_KNIGHT_PST, COMPUTER_KNIGHT_PST, BISHOP_COMPUTER_PST, BISHOP_HUMAN_PST, ROOK_COMPUTER_PST, ROOK_HUMAN_PST, QUEEN_COMPUTER_PST, QUEEN_HUMAN_PST, HUMAN_KING_END_PST, COMPUTER_KING_END_PST, HUMAN_KING_MIDDLE_PST, COMPUTER_KING_MIDDLE_PST
 from ChessEnums import Player
+from UtilityFunctions import getPSTScore
 from DebuggingTools import board_to_2D_array
 class BoardState:
     def __init__(self, 
@@ -269,22 +271,27 @@ class BoardState:
 
     '''
     def evaluate(self):
-        try:
-            return (
-                200*(self.numComputerKings - self.numHumanKings) + 
-                9 * (self.numComputerQueens - self.numHumanQueens) + 
-                5 * (self.numComputerRooks - self.numHumanRooks) + 
-                3 * (self.numComputerBishops - self.numHumanBishops + self.numComputerKnights - self.numHumanKnights) + 
-                (self.numComputerPawns - self.numHumanPawns) +
-                (generatePawnMoveCount(Player.COMPUTER, self) - generatePawnMoveCount(Player.HUMAN, self) + generateKingMovesCount(Player.COMPUTER, self) - generateKingMovesCount(Player.HUMAN, self)) +
-                5 * (generateQueenMovesCount(Player.COMPUTER, self) - generateQueenMovesCount(Player.HUMAN, self)) +
-                3 * (generateBishopMovesCount(Player.COMPUTER, self) - generateBishopMovesCount(Player.HUMAN, self) + generateRookMovesCount(Player.COMPUTER, self) - generateRookMovesCount(Player.HUMAN, self)) +
-                4 * (generateKnightMovesCount(Player.COMPUTER,self) - generateKnightMovesCount(Player.HUMAN, self))            
-                )
-        except TypeError as e:
-            print(e)
-            board_to_2D_array(self)
-            raise e
+        endgame = True if (self.numComputerQueens == 0 and self.numHumanQueens == 0) else False
+        kingPST = (getPSTScore("_computerKings", self, COMPUTER_KING_END_PST) - getPSTScore("_humanKings", self, HUMAN_KING_END_PST)) if endgame else (getPSTScore("_computerKings", self, COMPUTER_KING_MIDDLE_PST) - getPSTScore("_humanKings", self, HUMAN_KING_MIDDLE_PST))    
+        return (
+            20000*(self.numComputerKings - self.numHumanKings) + 
+            900 * (self.numComputerQueens - self.numHumanQueens) + 
+            500 * (self.numComputerRooks - self.numHumanRooks) + 
+            330 * (self.numComputerBishops - self.numHumanBishops) + 
+            320* (self.numComputerKnights - self.numHumanKnights) + 
+            100* (self.numComputerPawns - self.numHumanPawns) +
+            10 * (generatePawnMoveCount(Player.COMPUTER, self) - generatePawnMoveCount(Player.HUMAN, self) + generateKingMovesCount(Player.COMPUTER, self) - generateKingMovesCount(Player.HUMAN, self)) +
+            10 * (generateQueenMovesCount(Player.COMPUTER, self) - generateQueenMovesCount(Player.HUMAN, self)) +
+            10 * (generateBishopMovesCount(Player.COMPUTER, self) - generateBishopMovesCount(Player.HUMAN, self)) + 
+            10 * (generateRookMovesCount(Player.COMPUTER, self) - generateRookMovesCount(Player.HUMAN, self)) +
+            10 * (generateKnightMovesCount(Player.COMPUTER,self) - generateKnightMovesCount(Player.HUMAN, self)) +
+            kingPST + 
+            (getPSTScore("_computerKnights", self, COMPUTER_KNIGHT_PST) - getPSTScore("_humanKnights", self, HUMAN_KNIGHT_PST)) +
+            (getPSTScore("_computerBishops", self, BISHOP_COMPUTER_PST) - getPSTScore("_humanBishops", self, BISHOP_HUMAN_PST)) +
+            (getPSTScore("_computerQueens", self, QUEEN_COMPUTER_PST) - getPSTScore("_humanQueens", self, QUEEN_HUMAN_PST)) +
+            (getPSTScore("_computerRooks", self, ROOK_COMPUTER_PST) - getPSTScore("_humanRooks", self, ROOK_HUMAN_PST)) +
+            (getPSTScore("_computerPawns", self, COMPUTER_PAWN_PST) - getPSTScore("_humanPawns", self, HUMAN_PAWN_PST))
+            )
 
     def children(self, thePlayer: Player):
         # theKnights = generateKnightMoves(thePlayer, self)

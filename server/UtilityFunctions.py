@@ -1,4 +1,4 @@
-from ChessEnums import Player, Piece
+from ChessEnums import Player
 def splitPieceIntoIndividualBitboards (instanceVariableString:str, theBitBoardsObject):
     originalPieceBitboard = getattr(theBitBoardsObject, instanceVariableString)
     individualPieceBitboards = []
@@ -12,6 +12,13 @@ def splitPieceIntoIndividualBitboards (instanceVariableString:str, theBitBoardsO
         individualPieceBitboards.append(individualBoard)
         originalPieceBitboard ^= individualBoard
     return individualPieceBitboards
+def getPSTScore (instanceVariableString:str, theBitBoardsObject, thePSTDictionary: dict):
+    individualPieces = splitPieceIntoIndividualBitboards(instanceVariableString, theBitBoardsObject)
+    totalScore = 0
+    for piece in individualPieces:
+        totalScore += thePSTDictionary[piece]
+    return totalScore
+
 def generateOpponentMask (thePlayer: Player, theBitBoardsObject):
     if(thePlayer == Player.COMPUTER):
         return (theBitBoardsObject.humanKings | theBitBoardsObject.humanRooks | theBitBoardsObject.humanBishops | theBitBoardsObject.humanQueens | theBitBoardsObject.humanKnights | theBitBoardsObject.humanPawns)
