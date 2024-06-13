@@ -1,4 +1,5 @@
 from ChessEnums import Player
+from DebuggingTools import pretty_print_board
 from UtilityFunctions import splitPieceIntoIndividualBitboards, generateOpponentMask, generateFriendlyMasks, modifyBitboardToTakePiece
 RIGHT_BOUND = 0x01_01_01_01_01_01_01_01
 LEFT_BOUND = 0x80_80_80_80_80_80_80_80
@@ -29,15 +30,14 @@ def generateDiagonalPieceMoves(thePlayer: Player, theBitBoardsObject, pieceInsta
     for individualPiece in individualPieceBitboards:
         allOtherCurrentPlayerPieces, allOtherCurrentPlayerPiecesOfSameType = generateFriendlyMasks(thePlayer, pieceInstanceVariable, theBitBoardsObject, individualPiece)
         for index in range(4):
-            if (index == 0 and ((individualPiece & LEFT_BOUND) != 0) or ((individualPiece & LOWER_BOUND) != 0)):
+            if (index == 0 and (((individualPiece & LEFT_BOUND) != 0) or ((individualPiece & LOWER_BOUND) != 0))):
                 continue
-            if (index == 1 and ((individualPiece & RIGHT_BOUND) != 0) or ((individualPiece & LOWER_BOUND) != 0)):
+            if (index == 1 and (((individualPiece & RIGHT_BOUND) != 0) or ((individualPiece & LOWER_BOUND) != 0))):
                 continue
-            if (index == 2 and ((individualPiece & LEFT_BOUND) != 0) or ((individualPiece & UPPER_BOUND) != 0)):
+            if (index == 2 and (((individualPiece & LEFT_BOUND) != 0) or ((individualPiece & UPPER_BOUND) != 0))):
                 continue
-            if (index == 3 and ((individualPiece & RIGHT_BOUND) != 0) or ((individualPiece & UPPER_BOUND) != 0)):
+            if (index == 3 and (((individualPiece & RIGHT_BOUND) != 0) or ((individualPiece & UPPER_BOUND) != 0))):
                 continue
-            
             potentialLeftRightPieceMove = None
             if (index == 0):
                 potentialLeftRightPieceMove = individualPiece >> 7
