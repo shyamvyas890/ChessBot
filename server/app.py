@@ -5,6 +5,7 @@ from DebuggingTools import board_to_2D_array
 from UtilityFunctions import splitPieceIntoIndividualBitboards
 from KnightMovesGenerator import generateKnightMovesCount
 from BishopMovesGenerator import generateBishopMoves
+import multiprocessing
 import time
 app = Flask(__name__)
 
@@ -27,13 +28,26 @@ def hello():
 
     bitboardsObject = convert2DArrayToBitboards(initial_chess_board)
     t0 = time.time()
-    score = minimaxWithAlphaBeta(bitboardsObject, float('-inf'), float('inf'), True, 5, 5)
+    topLevelChildren = bitboardsObject.children(Player.COMPUTER)
+    results= None
+    with multiprocessing.Pool() as pool:
+        results = pool.map(runAlphaBetaWithDepthFour, topLevelChildren)
+    maxVal = float('-inf')
+    maxNode = None
+    for i in range(len(topLevelChildren)):
+        if(results[i] > maxVal):
+            maxNode = topLevelChildren[i]
+            maxVal = results[i]
     t1 = time.time()
-    board_to_2D_array(score)
+    board_to_2D_array(maxNode)
     print(t1-t0)
 
     
     return "Test"
+
+
+def runAlphaBetaWithDepthFour(theBitboardsObject):
+    return minimaxWithAlphaBeta(theBitboardsObject, float('-inf'), float('inf'), False, 4, 4)
     
 
 
