@@ -89,14 +89,14 @@ def generateDiagonalPieceMovesCount(thePlayer: Player, theBitBoardsObject, piece
     for individualPiece in individualPieceBitboards:
         allOtherCurrentPlayerPieces = generateFriendlyMasks(thePlayer, pieceInstanceVariable, theBitBoardsObject, individualPiece)[0]
         for index in range(4):
-            if (index == 0 and ((individualPiece & LEFT_BOUND) != 0) or ((individualPiece & LOWER_BOUND) != 0)):
+            if (index == 0 and (((individualPiece & LEFT_BOUND) != 0) or ((individualPiece & LOWER_BOUND) != 0))):
                 continue
-            if (index == 1 and ((individualPiece & RIGHT_BOUND) != 0) or ((individualPiece & LOWER_BOUND) != 0)):
+            if (index == 1 and (((individualPiece & RIGHT_BOUND) != 0) or ((individualPiece & LOWER_BOUND) != 0))):
                 continue
-            if (index == 2 and ((individualPiece & LEFT_BOUND) != 0) or ((individualPiece & UPPER_BOUND) != 0)):
+            if (index == 2 and (((individualPiece & LEFT_BOUND) != 0) or ((individualPiece & UPPER_BOUND) != 0))):
                 continue
-            if (index == 3 and ((individualPiece & RIGHT_BOUND) != 0) or ((individualPiece & UPPER_BOUND) != 0)):
-                continue 
+            if (index == 3 and (((individualPiece & RIGHT_BOUND) != 0) or ((individualPiece & UPPER_BOUND) != 0))):
+                continue
             potentialLeftRightPieceMove = None
             if (index == 0):
                 potentialLeftRightPieceMove = individualPiece >> 7
