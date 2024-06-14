@@ -4,27 +4,30 @@ from ArrayToBitboard import convert2DArrayToBitboards
 from DebuggingTools import board_to_2D_array
 from UtilityFunctions import splitPieceIntoIndividualBitboards
 from KnightMovesGenerator import generateKnightMovesCount
+from BishopMovesGenerator import generateBishopMoves
 import time
 app = Flask(__name__)
 
 @app.route('/')
 def hello():
 
+    
+
+
     initial_chess_board = [
-        [' ', 'R', 'B', ' ', 'K', 'B', ' ', 'R'],  
-        ['P', 'P', 'P', ' ', 'P', ' ', 'P', 'P'],   
-        [' ', ' ', ' ', ' ', 'Q', ' ', ' ', ' '],  
-        [' ', ' ', ' ', ' ', ' ', 'P', ' ', ' '],  
-        [' ', ' ', 'p', 'N', ' ', 'p', 'N', 'p'], 
-        ['n', 'p', ' ', 'b', ' ', ' ', 'q', ' '], 
-        ['p', ' ', ' ', 'p', ' ', ' ', 'p', ' '],  
-        [' ', 'r', 'b', ' ', ' ', 'k', 'n', 'r']   
+        ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],  
+        ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],   
+        [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  
+        [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  
+        [' ', ' ', ' ', ' ', 'p', ' ', ' ', ' '], 
+        [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+        ['p', 'p', 'p', 'p', ' ', 'p', 'p', 'p'],  
+        ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r']   
     ]
 
     bitboardsObject = convert2DArrayToBitboards(initial_chess_board)
-
     t0 = time.time()
-    score = minimaxWithAlphaBeta(bitboardsObject, float('-inf'), float('inf'), True, 4, 4)
+    score = minimaxWithAlphaBeta(bitboardsObject, float('-inf'), float('inf'), True, 5, 5)
     t1 = time.time()
     board_to_2D_array(score)
     print(t1-t0)

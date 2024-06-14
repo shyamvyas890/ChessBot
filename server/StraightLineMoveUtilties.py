@@ -28,7 +28,8 @@ queenInstanceVariableDictionary = {
 }
 def generateStraightLinePieceMoves(thePlayer: Player, theBitBoardsObject, pieceInstanceVariable):
     individualPieceBitboards = splitPieceIntoIndividualBitboards(pieceInstanceVariable, theBitBoardsObject)
-    finalLegalPieceMoves = []
+    legalPieceMovesWITHCapture = []
+    legalPieceMovesNOCapture = []
     allOpponentPlayerPieces = generateOpponentMask(thePlayer,theBitBoardsObject)
     for individualPiece in individualPieceBitboards:
         #other friendly pieces mask
@@ -48,11 +49,11 @@ def generateStraightLinePieceMoves(thePlayer: Player, theBitBoardsObject, pieceI
                 theBitBoardsObjectCopy = theBitBoardsObject.boardClone()
                 if(score == 3):
                     modifyBitboardToTakePiece(theBitBoardsObjectCopy,thePlayer, pieceInstanceVariable, newPieceBitboard, potentialUpDownPieceMove)
-                    finalLegalPieceMoves = [theBitBoardsObjectCopy] + finalLegalPieceMoves
+                    legalPieceMovesWITHCapture.append(theBitBoardsObjectCopy)
                     break
                 if(score == 4):
                     setattr(theBitBoardsObjectCopy, pieceInstanceVariable, newPieceBitboard)
-                    finalLegalPieceMoves.append(theBitBoardsObjectCopy)
+                    legalPieceMovesNOCapture.append(theBitBoardsObjectCopy)
                     if(index == 0):
                         potentialUpDownPieceMove <<= 8
                     elif(index == 1):
@@ -79,20 +80,20 @@ def generateStraightLinePieceMoves(thePlayer: Player, theBitBoardsObject, pieceI
                 theBitBoardsObjectCopy = theBitBoardsObject.boardClone()
                 if(score == 2):
                     modifyBitboardToTakePiece(theBitBoardsObjectCopy, thePlayer, pieceInstanceVariable, newPieceBitboard, potentialLeftRightPieceMove)
-                    finalLegalPieceMoves = [theBitBoardsObjectCopy] + finalLegalPieceMoves
+                    legalPieceMovesWITHCapture.append(theBitBoardsObjectCopy)
                     break
                 if(score == 3):
                     setattr(theBitBoardsObjectCopy, pieceInstanceVariable, newPieceBitboard)
-                    finalLegalPieceMoves.append(theBitBoardsObjectCopy)
+                    legalPieceMovesNOCapture.append(theBitBoardsObjectCopy)
                     break
                 if(score == 4):
                     setattr(theBitBoardsObjectCopy, pieceInstanceVariable, newPieceBitboard)
-                    finalLegalPieceMoves.append(theBitBoardsObjectCopy)
+                    legalPieceMovesNOCapture.append(theBitBoardsObjectCopy)
                     if(index == 0):
                         potentialLeftRightPieceMove <<= 1
                     elif(index == 1):
                         potentialLeftRightPieceMove >>= 1
-    return finalLegalPieceMoves
+    return (legalPieceMovesWITHCapture, legalPieceMovesNOCapture)
 
 def generateStraightLinePieceMovesCount(thePlayer:Player, theBitBoardsObject, pieceInstanceVariable):
     individualPieceBitboards = splitPieceIntoIndividualBitboards(pieceInstanceVariable, theBitBoardsObject)

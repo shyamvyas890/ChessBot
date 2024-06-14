@@ -25,7 +25,8 @@ def validateMove(potentialLeftRightPieceMove, friendlyMask, opponentMask, direct
 
 def generateDiagonalPieceMoves(thePlayer: Player, theBitBoardsObject, pieceInstanceVariable):
     individualPieceBitboards = splitPieceIntoIndividualBitboards(pieceInstanceVariable, theBitBoardsObject)
-    finalLegalPieceMoves = []
+    legalPieceMovesWITHCapture = []
+    legalPieceMovesNOCapture = []
     allOpponentPlayerPieces = generateOpponentMask(thePlayer,theBitBoardsObject)
     for individualPiece in individualPieceBitboards:
         allOtherCurrentPlayerPieces, allOtherCurrentPlayerPiecesOfSameType = generateFriendlyMasks(thePlayer, pieceInstanceVariable, theBitBoardsObject, individualPiece)
@@ -63,15 +64,15 @@ def generateDiagonalPieceMoves(thePlayer: Player, theBitBoardsObject, pieceInsta
                 theBitBoardsObjectCopy = theBitBoardsObject.boardClone()
                 if (score == 2):
                     modifyBitboardToTakePiece(theBitBoardsObjectCopy,thePlayer, pieceInstanceVariable, newPieceBitboard, potentialLeftRightPieceMove)
-                    finalLegalPieceMoves = [theBitBoardsObjectCopy] + finalLegalPieceMoves
+                    legalPieceMovesWITHCapture.append(theBitBoardsObjectCopy)
                     break
                 if(score == 3):
                     setattr(theBitBoardsObjectCopy, pieceInstanceVariable, newPieceBitboard)
-                    finalLegalPieceMoves.append(theBitBoardsObjectCopy)
+                    legalPieceMovesNOCapture.append(theBitBoardsObjectCopy)
                     break
                 if (score == 4):
                     setattr(theBitBoardsObjectCopy, pieceInstanceVariable, newPieceBitboard)
-                    finalLegalPieceMoves.append(theBitBoardsObjectCopy)
+                    legalPieceMovesNOCapture.append(theBitBoardsObjectCopy)
                     if(index == 0):
                         potentialLeftRightPieceMove >>= 7
                     elif (index == 1):
@@ -80,7 +81,7 @@ def generateDiagonalPieceMoves(thePlayer: Player, theBitBoardsObject, pieceInsta
                         potentialLeftRightPieceMove <<= 9
                     elif (index == 3):
                         potentialLeftRightPieceMove <<= 7
-    return finalLegalPieceMoves
+    return (legalPieceMovesWITHCapture, legalPieceMovesNOCapture)
 
 def generateDiagonalPieceMovesCount(thePlayer: Player, theBitBoardsObject, pieceInstanceVariable):
     individualPieceBitboards = splitPieceIntoIndividualBitboards(pieceInstanceVariable, theBitBoardsObject)

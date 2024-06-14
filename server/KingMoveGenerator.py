@@ -15,7 +15,8 @@ kingInstanceVariableDictionary = {
 diagonalOffsets = (7,9,-9,-7) # southwest, southeast, northwest, northeast
 straightOffsets = (8,-8,1,-1) # south, north, right, left
 def generateKingMoves (thePlayer: Player, theBitBoardsObject):
-    finalLegalKingMoves = []
+    legalKingMovesWITHCapture = []
+    legalKingMovesNOCapture = []
     allOpponentPlayerPieces = generateOpponentMask(thePlayer,theBitBoardsObject)
     allOtherCurrentPlayerPieces = generateFriendlyMasks(thePlayer, kingInstanceVariableDictionary[thePlayer], theBitBoardsObject, getattr(theBitBoardsObject, kingInstanceVariableDictionary[thePlayer]))[0]
     currentKing = getattr(theBitBoardsObject, kingInstanceVariableDictionary[thePlayer])
@@ -47,13 +48,13 @@ def generateKingMoves (thePlayer: Player, theBitBoardsObject):
             newKingPosition = currentKing << abs(offset)
         if(newKingPosition & allOpponentPlayerPieces) != 0:
             modifyBitboardToTakePiece(theBitBoardsObjectCopy, thePlayer,kingInstanceVariableDictionary[thePlayer], newKingPosition, newKingPosition)
-            finalLegalKingMoves = [theBitBoardsObjectCopy] + finalLegalKingMoves
+            legalKingMovesWITHCapture.append(theBitBoardsObjectCopy)
         else:
             setattr(theBitBoardsObjectCopy, kingInstanceVariableDictionary[thePlayer], newKingPosition)
-            finalLegalKingMoves.append(theBitBoardsObjectCopy)
+            legalKingMovesNOCapture.append(theBitBoardsObjectCopy)
     
 
-    return finalLegalKingMoves
+    return (legalKingMovesWITHCapture, legalKingMovesNOCapture)
     
 
     

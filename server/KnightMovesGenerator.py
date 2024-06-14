@@ -17,8 +17,9 @@ sub17 = 0xFF_FF_80_80_80_80_80_80
 
 
 def generateKnightMoves(thePlayer: Player, theBitboardsObject):
-    individualKnightBitboards = splitPieceIntoIndividualBitboards(knightInstanceVariableDictionary[thePlayer], theBitboardsObject)     
-    finalLegalKnightMoves = []
+    individualKnightBitboards = splitPieceIntoIndividualBitboards(knightInstanceVariableDictionary[thePlayer], theBitboardsObject)
+    legalKnightMovesNOCapture = []
+    legalKnightMovesWITHCapture = []
     opponentMask = generateOpponentMask(thePlayer, theBitboardsObject)
     for individualKnight in individualKnightBitboards:
         unviolatedMasks = []
@@ -79,9 +80,9 @@ def generateKnightMoves(thePlayer: Player, theBitboardsObject):
                     elif((theBitboardsObjectCopy.humanPawns & translatedBitboard) != 0):
                         theBitboardsObjectCopy.humanPawns ^= translatedBitboard
                         theBitboardsObjectCopy.numHumanPawns -= 1
-                    finalLegalKnightMoves = [theBitboardsObjectCopy] + finalLegalKnightMoves
+                    legalKnightMovesWITHCapture.append(theBitboardsObjectCopy)
                 else:
-                    finalLegalKnightMoves.append(theBitboardsObjectCopy)
+                    legalKnightMovesNOCapture.append(theBitboardsObjectCopy)
         elif (thePlayer == Player.HUMAN):
             for translatedBitboard in translatedBitboardsP2:
                 newKnightBitboard = translatedBitboard | otherSelectedPlayerKnightsOnCurrentBoard
@@ -106,11 +107,11 @@ def generateKnightMoves(thePlayer: Player, theBitboardsObject):
                     elif((theBitboardsObjectCopy.computerPawns & translatedBitboard) != 0):
                         theBitboardsObjectCopy.computerPawns ^= translatedBitboard
                         theBitboardsObjectCopy.numComputerPawns -=1
-                    finalLegalKnightMoves = [theBitboardsObjectCopy] + finalLegalKnightMoves
+                    legalKnightMovesWITHCapture.append(theBitboardsObjectCopy)
                 else:
-                    finalLegalKnightMoves.append(theBitboardsObjectCopy)
+                    legalKnightMovesNOCapture.append(theBitboardsObjectCopy)
                 
-    return finalLegalKnightMoves
+    return (legalKnightMovesWITHCapture, legalKnightMovesNOCapture)
 
 
 def generateKnightMovesCount(thePlayer: Player, theBitboardsObject):

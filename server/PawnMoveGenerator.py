@@ -18,7 +18,9 @@ LEFT_BOUND = 0x80_80_80_80_80_80_80_80
 
 def generatePawnMoves(thePlayer: Player, theBitboardsObject):
     individualPawnBitboards = splitPieceIntoIndividualBitboards(PAWN_INSTANCE_VARIABLE_DICTIONARY[thePlayer], theBitboardsObject)
-    finalLegalPawnMoves = []
+    legalPawnMovesPromotion = [] # may be capture or not capture
+    legalPawnMovesWITHCapture = [] # definitely not promotion
+    legalPawnMovesNOCapture = [] # definitely not promotion
     allOpponentPlayerPieces = generateOpponentMask(thePlayer, theBitboardsObject)
     for individualPawn in individualPawnBitboards:
         allOtherCurrentPlayerPieces, allOtherCurrentPlayerPiecesOfSameType = generateFriendlyMasks(thePlayer,PAWN_INSTANCE_VARIABLE_DICTIONARY[thePlayer], theBitboardsObject, individualPawn)
@@ -49,9 +51,13 @@ def generatePawnMoves(thePlayer: Player, theBitboardsObject):
                     theBitboardsObjectCopy.numComputerQueens += 1
                     theBitboardsObjectCopy2.computerKnights |= potentialMove
                     theBitboardsObjectCopy2.numComputerKnights += 1
-                    finalLegalPawnMoves = [theBitboardsObjectCopy, theBitboardsObjectCopy2] + finalLegalPawnMoves
+                    legalPawnMovesPromotion.append(theBitboardsObjectCopy)
+                    legalPawnMovesPromotion.append(theBitboardsObjectCopy2)
                 else:
-                    finalLegalPawnMoves.append(theBitboardsObjectCopy)     
+                    if(offset == 7 or offset == 9):
+                        legalPawnMovesWITHCapture.append(theBitboardsObjectCopy)
+                    else:
+                        legalPawnMovesNOCapture.append(theBitboardsObjectCopy)     
         else:    
             potentialOffsetsForThisPiece = []
             if((individualPawn << 8) & allPiecesOtherThanThisPawn) == 0:
@@ -78,10 +84,15 @@ def generatePawnMoves(thePlayer: Player, theBitboardsObject):
                     theBitboardsObjectCopy.numHumanQueens += 1
                     theBitboardsObjectCopy2.humanKnights |= potentialMove
                     theBitboardsObjectCopy2.numHumanKnights += 1
-                    finalLegalPawnMoves = [theBitboardsObjectCopy, theBitboardsObjectCopy2] + finalLegalPawnMoves
+                    legalPawnMovesPromotion.append(theBitboardsObjectCopy)
+                    legalPawnMovesPromotion.append(theBitboardsObjectCopy2)
                 else:
-                    finalLegalPawnMoves.append(theBitboardsObjectCopy)
-    return finalLegalPawnMoves
+                    if(offset == 7 or offset == 9):
+                        legalPawnMovesWITHCapture.append(theBitboardsObjectCopy)
+                    else:
+                        legalPawnMovesNOCapture.append(theBitboardsObjectCopy)
+
+    return (legalPawnMovesPromotion, legalPawnMovesWITHCapture, legalPawnMovesNOCapture)
 def generatePawnMoveCount (thePlayer: Player, theBitboardsObject):
     individualPawnBitboards = splitPieceIntoIndividualBitboards(PAWN_INSTANCE_VARIABLE_DICTIONARY[thePlayer], theBitboardsObject)
     allOpponentPlayerPieces = generateOpponentMask(thePlayer, theBitboardsObject)
