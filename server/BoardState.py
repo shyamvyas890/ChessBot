@@ -8,6 +8,7 @@ from PieceSquareTables import HUMAN_PAWN_PST, COMPUTER_PAWN_PST, HUMAN_KNIGHT_PS
 from ChessEnums import Player
 from UtilityFunctions import getPSTScore
 from DebuggingTools import board_to_2D_array
+from PawnStructures import getDoubledPawnsCount, getIsolatedPawnsCount, getPassedPawnsCount
 class BoardState:
     def __init__(self, 
                  computerKings, computerRooks, computerBishops, computerQueens, 
@@ -290,8 +291,11 @@ class BoardState:
             (getPSTScore("_computerBishops", self, BISHOP_COMPUTER_PST) - getPSTScore("_humanBishops", self, BISHOP_HUMAN_PST)) +
             (getPSTScore("_computerQueens", self, QUEEN_COMPUTER_PST) - getPSTScore("_humanQueens", self, QUEEN_HUMAN_PST)) +
             (getPSTScore("_computerRooks", self, ROOK_COMPUTER_PST) - getPSTScore("_humanRooks", self, ROOK_HUMAN_PST)) +
-            (getPSTScore("_computerPawns", self, COMPUTER_PAWN_PST) - getPSTScore("_humanPawns", self, HUMAN_PAWN_PST))
-            )
+            (getPSTScore("_computerPawns", self, COMPUTER_PAWN_PST) - getPSTScore("_humanPawns", self, HUMAN_PAWN_PST)) +
+            40 * (getPassedPawnsCount(Player.COMPUTER, self._computerPawns, self._humanPawns) - getPassedPawnsCount(Player.HUMAN, self._humanPawns, self._computerPawns)) +
+            (-30) * (getIsolatedPawnsCount(self._computerPawns) - getIsolatedPawnsCount(self._humanPawns)) + 
+            (-15) * (getDoubledPawnsCount(self._computerPawns) - getDoubledPawnsCount(self._humanPawns))
+        )
 
     def children(self, thePlayer: Player):
         knightCaptures, knightRegular = generateKnightMoves(thePlayer, self)
