@@ -28,7 +28,20 @@ def hello():
 
     bitboardsObject = convert2DArrayToBitboards(initial_chess_board)
     t0 = time.time()
-    topLevelChildren = bitboardsObject.children(Player.COMPUTER)
+    computerIsUnderCheck = isComputerUnderCheckRightNow(bitboardsObject)
+    topLevelChildren = None
+    if(not computerIsUnderCheck):
+        topLevelChildren = bitboardsObject.children(Player.COMPUTER)
+    else:
+        unfilteredTopLevelChildren = bitboardsObject.children(Player.COMPUTER)
+        topLevelChildren = []
+        for child in unfilteredTopLevelChildren:
+            if(not isComputerUnderCheckRightNow(child)):
+                topLevelChildren.append(child)
+        if(len(topLevelChildren) == 0):
+            print("Human beat you")
+            return "Human won"
+
     results= None
     with multiprocessing.Pool() as pool:
         results = pool.map(runAlphaBetaWithDepthFour, topLevelChildren)
@@ -48,6 +61,16 @@ def hello():
 
 def runAlphaBetaWithDepthFour(theBitboardsObject):
     return minimaxWithAlphaBeta(theBitboardsObject, float('-inf'), float('inf'), False, 4, 4)
+
+def isComputerUnderCheckRightNow(theBitboardsObject):
+    possibleHumanMoves = theBitboardsObject.children(Player.HUMAN)
+    for move in possibleHumanMoves:
+        if (move.numComputerKings == 0):
+            return True
+    return False
+
+    
+
     
 
 

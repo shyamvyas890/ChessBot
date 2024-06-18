@@ -281,11 +281,11 @@ class BoardState:
             330 * (self.numComputerBishops - self.numHumanBishops) + 
             320* (self.numComputerKnights - self.numHumanKnights) + 
             100* (self.numComputerPawns - self.numHumanPawns) +
-            10 * (generatePawnMoveCount(Player.COMPUTER, self) - generatePawnMoveCount(Player.HUMAN, self) + generateKingMovesCount(Player.COMPUTER, self) - generateKingMovesCount(Player.HUMAN, self)) +
-            10 * (generateQueenMovesCount(Player.COMPUTER, self) - generateQueenMovesCount(Player.HUMAN, self)) +
-            10 * (generateBishopMovesCount(Player.COMPUTER, self) - generateBishopMovesCount(Player.HUMAN, self)) + 
-            10 * (generateRookMovesCount(Player.COMPUTER, self) - generateRookMovesCount(Player.HUMAN, self)) +
-            10 * (generateKnightMovesCount(Player.COMPUTER,self) - generateKnightMovesCount(Player.HUMAN, self)) +
+            # # 5 * (generatePawnMoveCount(Player.COMPUTER, self) - generatePawnMoveCount(Player.HUMAN, self) + generateKingMovesCount(Player.COMPUTER, self) - generateKingMovesCount(Player.HUMAN, self)) +
+            # 2 * (generateQueenMovesCount(Player.COMPUTER, self) - generateQueenMovesCount(Player.HUMAN, self)) +
+            # 3 * (generateBishopMovesCount(Player.COMPUTER, self) - generateBishopMovesCount(Player.HUMAN, self)) + 
+            # 3 * (generateRookMovesCount(Player.COMPUTER, self) - generateRookMovesCount(Player.HUMAN, self)) +
+            # 7 * (generateKnightMovesCount(Player.COMPUTER,self) - generateKnightMovesCount(Player.HUMAN, self)) +
             kingPST + 
             (getPSTScore("_computerKnights", self, COMPUTER_KNIGHT_PST) - getPSTScore("_humanKnights", self, HUMAN_KNIGHT_PST)) +
             (getPSTScore("_computerBishops", self, BISHOP_COMPUTER_PST) - getPSTScore("_humanBishops", self, BISHOP_HUMAN_PST)) +
